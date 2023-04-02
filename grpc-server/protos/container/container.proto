@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package container;
+option go_package = "./container";
+
+service Containers {
+    rpc createContainer(Container) returns (ContainerCreationResponse) {}
+}
+
+message Container {
+    string name = 1;
+    string image = 2;
+    string network = 3;
+}
+
+message ContainerCreated {
+    string name = 1;
+    string network = 2;
+}
+
+message ContainerCreationError {
+    string error = 1;
+}
+
+message ContainerCreationResponse {
+    oneof response {
+        ContainerCreated container_created = 1;
+        ContainerCreationError container_error = 2;
+    }
+}
