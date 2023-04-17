@@ -10,7 +10,10 @@ https://docs.djangoproject.com/en/4.1/howto/deployment/wsgi/
 import os
 
 from django.core.wsgi import get_wsgi_application
+from utils.logger import setup_logging
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'rest.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rest.settings")
 
 application = get_wsgi_application()
+
+setup_logging()

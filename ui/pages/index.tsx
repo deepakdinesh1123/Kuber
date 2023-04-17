@@ -1,29 +1,18 @@
-import { useState } from 'react';
-import dynamic from 'next/dynamic';
-import { upsertFile } from '../utils/db/client';
-import { db } from '../utils/db/db.config';
+import Login from "@/components/user/login";
+import Register from "@/components/user/register";
+import { useState } from "react";
 
-const MonacoEditor = dynamic(() => import('../components/editor'), {
-  ssr: false
-});
+export default function Index() {
 
-const MyPage = () => {
-  const [code, setCode] = useState<string>('import life;');
-  let debounceTimeout : NodeJS.Timeout | undefined;
-
-  const handleCodeChange = (content: string) => {
-    setCode(content);
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout( async () => {
-      const update = await upsertFile(db, "something", content);
-    }, 1000);
-  };
-
-  return (
-      <div>
-        <MonacoEditor value={code} onChange={handleCodeChange} />
-      </div>
-  );
-};
-
-export default MyPage;
+  const [showRegister, setShowRegister] = useState(false);
+  return <>
+    {!showRegister ?
+        <div>
+        <Login /> <div onClick={() => setShowRegister(true)}>Register</div>
+        </div>
+        :
+        <div>
+        <Register/> <div onClick={() => setShowRegister(false)}>Login</div>
+      </div>}
+  </>
+}

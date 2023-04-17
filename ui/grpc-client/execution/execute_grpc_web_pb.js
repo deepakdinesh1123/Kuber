@@ -8,7 +8,7 @@
 // versions:
 // 	protoc-gen-grpc-web v1.4.2
 // 	protoc              v3.12.4
-// source: execute.proto
+// source: grpc-server/protos/execution/execute.proto
 
 
 /* eslint-disable */
@@ -135,5 +135,60 @@ proto.execution.ExecutePromiseClient.prototype.executeCommand =
 };
 
 
-module.exports = proto.execution;
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.execution.ExecuteRequest,
+ *   !proto.execution.ExecutionResponse>}
+ */
+const methodDescriptor_Execute_executeCommandStream = new grpc.web.MethodDescriptor(
+  '/execution.Execute/executeCommandStream',
+  grpc.web.MethodType.SERVER_STREAMING,
+  proto.execution.ExecuteRequest,
+  proto.execution.ExecutionResponse,
+  /**
+   * @param {!proto.execution.ExecuteRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.execution.ExecutionResponse.deserializeBinary
+);
 
+
+/**
+ * @param {!proto.execution.ExecuteRequest} request The request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!grpc.web.ClientReadableStream<!proto.execution.ExecutionResponse>}
+ *     The XHR Node Readable Stream
+ */
+proto.execution.ExecuteClient.prototype.executeCommandStream =
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
+      '/execution.Execute/executeCommandStream',
+      request,
+      metadata || {},
+      methodDescriptor_Execute_executeCommandStream);
+};
+
+
+/**
+ * @param {!proto.execution.ExecuteRequest} request The request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!grpc.web.ClientReadableStream<!proto.execution.ExecutionResponse>}
+ *     The XHR Node Readable Stream
+ */
+proto.execution.ExecutePromiseClient.prototype.executeCommandStream =
+    function(request, metadata) {
+  return this.client_.serverStreaming(this.hostname_ +
+      '/execution.Execute/executeCommandStream',
+      request,
+      metadata || {},
+      methodDescriptor_Execute_executeCommandStream);
+};
+
+
+module.exports = proto.execution;

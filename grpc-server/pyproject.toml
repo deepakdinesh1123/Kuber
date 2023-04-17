@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "grpc-server"
+version = "0.0.1"
+description = "grpc server for the kuber project"
+authors = ["deepakdinesh1123 <d.deepakdinesh13@gmail.com>"]
+readme = "README.md"
+packages = [{include = "grpc_server"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+docker = "^6.0.1"
+grpcio = "^1.53.0"
+grpcio-tools = "^1.53.0"
+watchdog = "^3.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

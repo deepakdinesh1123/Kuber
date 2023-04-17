@@ -1,0 +1,35 @@
+syntax = "proto3";
+package files;
+
+service Files {
+    rpc copyFilesToContainer(stream FilesToCopy) returns (CopyResponse) {}
+    rpc getFilesAndFolders(Container) returns (stream FilesResponse) {}
+    rpc getDirectory(Container) returns (DirectoryStrcuture) {}
+}
+
+
+message File {
+    string name = 1;
+    string path = 2;
+}
+
+message Container {
+    string name = 1;
+}
+
+message FilesToCopy {
+    string container = 1;
+    repeated File file = 2;
+}
+
+message CopyResponse {
+    bool success = 1;
+}
+
+message FilesResponse {
+    repeated File file = 1;
+}
+
+message DirectoryStrcuture {
+    string yaml_rep = 1;
+}
