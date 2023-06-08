@@ -2,9 +2,8 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from .exceptions import UserAlreadyExists
-from .serializers import UserSerializer
+from user.exceptions import UserAlreadyExists
+from user.serializers import UserSerializer
 
 # Create your views here.
 
@@ -20,6 +19,6 @@ class RegisterView(APIView):
                 "User with provided email already exists",
                 status=status.HTTP_405_METHOD_NOT_ALLOWED,
             )
-        resp = Response(serializer.data, status=status.HTTP_201_CREATED)
+        resp = Response("Registration successful", status=status.HTTP_201_CREATED)
         resp.set_cookie("logged_in", "True")
         return resp

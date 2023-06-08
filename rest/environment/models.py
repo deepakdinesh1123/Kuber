@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from user.models import KuberUser
+from user.models import KuberUser, UserRole
 
 
 # Create your models here.
@@ -13,6 +13,7 @@ class DockerEnvironment(models.Model):
     creator = models.ForeignKey(
         to=KuberUser, related_name="+", to_field="id", on_delete=models.CASCADE
     )
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
     config = models.JSONField(name="config", default=dict)
 
 

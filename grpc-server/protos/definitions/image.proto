@@ -39,7 +39,7 @@ message ImageRegistryDetails {
     string name = 1;
     string tag = 2;
     string hub = 3;
-    string credential = 4;
+    string repository = 4;
 }
 
 message GenericResponse {

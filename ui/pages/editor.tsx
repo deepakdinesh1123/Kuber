@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic';
 import { upsertFile } from '../utils/db/client';
 import { db } from '../utils/db/db.config';
 
-const MonacoEditor = dynamic(() => import('../components/editor'), {
+const MonacoEditor = dynamic(() => import('../components/ide/editor'), {
   ssr: false
 });
 
@@ -16,12 +16,15 @@ const Editor = () => {
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout( async () => {
       const update = await upsertFile(db, "something", content);
+
+
+
     }, 1000);
   };
 
   return (
       <div>
-        <MonacoEditor value={code} onChange={handleCodeChange} />
+        <MonacoEditor value={code} onChange={handleCodeChange} language='Docker' />
       </div>
   );
 };

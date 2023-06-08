@@ -1,20 +1,57 @@
 version: '3.9'
 services:
 
-  # db:
-  #   image: postgres
-  #   environment:
-  #     POSTGRES_USER: root
-  #     POSTGRES_PASSWORD: root
-  #     POSTGRES_DB: kuber
-  #   ports:
-  #     - "1486:5432"
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: kuber
+    network_mode: host
 
   envoy:
     image: envoyproxy/envoy:v1.25.3
     command: ["envoy", "-c", "/etc/envoy.yaml", "--service-cluster", "envoy"]
     volumes:
       - ./envoy.yaml:/etc/envoy.yaml
-    ports:
-      - "8080:8080"
-      - "9901:9901"
+    network_mode: host
+
+  redis:
+    image: redis:latest
+    network_mode: host
+
+  vault:
+    image: vault:latest
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=myroot
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+    network_mode: host
+
+  rest_api:
+    build:
+      context: .
+      dockerfile: dockerfiles/rest.dockerfile
+    environment:
+      - DEBUG=True
+    depends_on:
+      - postgres
+      - envoy
+      - redis
+    volumes:
+      - ./rest:/rest
+    network_mode: host
+
+  ui:
+    build:
+      context: .
+      dockerfile: dockerfiles/ui.dockerfile
+    depends_on:
+      - rest_api
+      - postgres
+      - envoy
+      - redis
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./ui:/usr/src/app
+    network_mode: host

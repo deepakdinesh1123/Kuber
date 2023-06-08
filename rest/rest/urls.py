@@ -22,4 +22,6 @@ urlpatterns = [
     path("api/login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/login/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("account/", include("user.urls")),
+    path("languages/", include("language_support.urls")),
+    path("environment/", include("environment.urls")),
 ]

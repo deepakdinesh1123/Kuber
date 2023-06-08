@@ -9,25 +9,30 @@ export default function Login() {
     e.preventDefault();
     const email = e.target[0].value;
     const password = e.target[1].value;
+    const formdata = new FormData();
+    formdata.append("password", password);
+    formdata.append("email", email);
 
-    fetch('http://localhost:8000/account/api/login', {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        "email": email,
-        "password": password
+    const requestOptions: RequestInit = {
+      method: 'POST',
+      headers: new Headers(),
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    fetch(`${process.env.NEXT_PUBLIC_HOST}/api/login/`, requestOptions)
+      .then(response => {
+            if(response.ok) {
+            return response.json(); }
+          }
+        )
+      .then(result => {
+        console.log(result);
+        Cookies.set("logged_in", "true");
+        Cookies.set("access_token", result['access']);
+        router.push("http://localhost:3000/environments/list")
       })
-    }).then( res => {
-      if(res.status == 405) {
-        console.log("User already exists");
-      }
-      else {
-        Cookies.set('logged_in', 'true');
-        router.push("http://localhost:3000/environment")
-      }
-    });
+      .catch(error => console.log('error', error));
   };
 
   useEffect( () => {

@@ -50,3 +50,11 @@ class KuberUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class UserRole(models.Model):
+    role_id = models.UUIDField(
+        primary_key=True, default=uuid4, name="role_id", editable=False
+    )
+    role_name = models.CharField(max_length=20, editable=False, name="role_name")
+    permissions = models.JSONField()

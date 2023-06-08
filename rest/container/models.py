@@ -1,16 +1,17 @@
 from uuid import uuid4
 
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from environment.models import DockerEnvironment
 from user.models import KuberUser
 
+ENV_CHOICES = [("docker", "docker"), ("compose", "docker-compose")]
+
 
 # Create your models here.
-class Container(models.Model):
-    container_id = models.UUIDField(
-        primary_key=True, default=uuid4, name="container_id"
-    )
-    container_name = models.CharField(max_length=100, name="container_name")
+class Containers(models.Model):
+    ID = models.UUIDField(primary_key=True, default=uuid4)
+    file = models.CharField(max_length=10, choices=ENV_CHOICES)
     environment = models.ForeignKey(
         to=DockerEnvironment,
         on_delete=models.CASCADE,
@@ -18,25 +19,7 @@ class Container(models.Model):
         related_name="+",
     )
     config = models.JSONField(name="config")
+    continer_ids = ArrayField(models.CharField(max_length=100), name="container_ids")
     created_by = models.ForeignKey(
         to=KuberUser, on_delete=models.CASCADE, to_field="id", related_name="+"
     )
-
-
-class UserContainers(models.Model):
-    user_id = models.ForeignKey(
-        to=KuberUser, on_delete=models.CASCADE, to_field="id", related_name="+"
-    )
-    container_id = models.ForeignKey(
-        to=Container,
-        on_delete=models.CASCADE,
-        to_field="container_id",
-        related_name="+",
-    )
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user_id", "container_id"], name="user_container_pk"
-            )
-        ]

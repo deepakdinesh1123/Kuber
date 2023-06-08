@@ -1,0 +1,28 @@
+.container {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    transition: background-color 0.2s ease;
+  }
+
+  .label:hover {
+    background-color: #f0f0f0;
+  }
+
+  .name {
+    margin-left: 8px;
+  }
+
+  .icon {
+    margin-right: 8px;
+  }
+
+  .children {
+    margin-left: 16px;
+  }

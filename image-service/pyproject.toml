@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "image-service"
+version = "0.0.1"
+description = "Microservice that handles the job of push images to registry"
+authors = ["deepakdinesh1123 <d.deepakdinesh13@gmail.com>"]
+readme = "README.md"
+packages = [{include = "image_service"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.95.1"
+uvicorn = {extras = ["standard"], version = "^0.21.1"}
+python-dotenv = "^1.0.0"
+rq = "^1.13.0"
+docker = "^6.0.1"
+python-multipart = "^0.0.6"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -12,7 +12,7 @@ export default function Register() {
     const email = e.target[1].value;
     const password = e.target[1].value;
 
-    fetch('http://localhost:8000/account/api/register', {
+    fetch(`${process.env.HOST}/account/api/register`, {
       method: "POST",
       headers: {
         'Content-Type': 'application/json'

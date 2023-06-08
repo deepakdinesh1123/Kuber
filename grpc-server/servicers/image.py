@@ -23,3 +23,6 @@ class Image(img_grpc.ImagesServicer):
         except Exception as e:
             print(e)
             traceback.print_exc()
+
+    async def pushImage(self, request, context):
+        return super().pushImage(request, context)

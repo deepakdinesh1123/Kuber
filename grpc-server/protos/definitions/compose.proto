@@ -1,0 +1,23 @@
+syntax="proto3";
+
+package compose;
+
+service compose {
+    rpc createComposeEnv(ComposeEnvFromUser) returns (stream CreationResponse) {}
+}
+
+message ComposeEnvFromUser {
+    string name = 1;
+    bytes composeFile = 2;
+    string config = 3;
+}
+
+message ComposeEnvFromGithub {
+    string name = 1;
+    string repo_url = 2;
+    string
+}
+
+message CreationResponse {
+    string message = 2;
+}

@@ -1,6 +1,5 @@
 from django.contrib import admin
-
-from .models import KuberUser
+from user.models import KuberUser
 
 # Register your models here.
 
