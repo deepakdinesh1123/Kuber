@@ -282,3 +282,5 @@ cython_debug/
 
 # vscode
 .vscode/
+
+data.json

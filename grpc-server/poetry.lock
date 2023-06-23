@@ -250,6 +250,17 @@ files = [
 ]
 
 [[package]]
+name = "namegenerator"
+version = "1.0.6"
+description = "Generate Random Names for anything"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "namegenerator-1.0.6.tar.gz", hash = "sha256:144759c62d771e5b589514a0aa332d0b967818c0a24b7824e48a905357c58bfa"},
+]
+
+[[package]]
 name = "packaging"
 version = "23.0"
 description = "Core utilities for Python packages"
@@ -348,6 +359,18 @@ testing = ["build[virtualenv]", "filelock (>=3.4.0)", "flake8 (<5)", "flake8-202
 testing-integration = ["build[virtualenv]", "filelock (>=3.4.0)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "pytest", "pytest-enabler", "pytest-xdist", "tomli", "virtualenv (>=13.0.0)", "wheel"]
 
 [[package]]
+name = "tinydb"
+version = "4.7.1"
+description = "TinyDB is a tiny, document oriented database optimized for your happiness :)"
+category = "main"
+optional = false
+python-versions = ">=3.7,<4.0"
+files = [
+    {file = "tinydb-4.7.1-py3-none-any.whl", hash = "sha256:1534e498ca23f55c43b0f1e7c0cf174049498ab45a887c82ba9831e0f9868df3"},
+    {file = "tinydb-4.7.1.tar.gz", hash = "sha256:8955c239a79b8a6c8f637900152e2de38690848199d71d870c33c16405433ca5"},
+]
+
+[[package]]
 name = "urllib3"
 version = "1.26.15"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
@@ -424,4 +447,4 @@ test = ["websockets"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "072f6d7ed23e45b9f5717fbaf1b15adb83b3be52d3b9ee1e2bc8b3bd7a839fbd"
+content-hash = "bb3bcdf5af3fa8517bcb93b20273d90275514cc8f137f57318d1e26d188f493f"

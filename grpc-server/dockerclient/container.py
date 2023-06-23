@@ -5,10 +5,8 @@ from docker.models.containers import Container
 from dockerclient.client import cli
 
 
-def create_container(name: str, image: str, network: str) -> Generator[str, None, None]:
-    container = cli.containers.run(
-        name=name, image=image, network=network, detach=True, tty=True
-    )
+def create_container(name: str, image: str) -> Generator[str, None, None]:
+    container = cli.containers.run(name=name, image=image, detach=True, tty=True)
     return container.logs(stream=True)
 
 

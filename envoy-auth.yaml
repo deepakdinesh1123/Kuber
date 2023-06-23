@@ -1,0 +1,60 @@
+static_resources:
+  listeners:
+  - name: listener_backend
+    address:
+      socket_address:
+        address: 0.0.0.0  # [1]
+        port_value: 8081
+    filter_chains:
+    - filters:
+      - name: envoy.http_connection_manager
+        config:
+          codec_type: auto
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - name: local_service
+              domains: ["*"]  # [2]
+              routes:
+              - match: { path: "/" }  # [3]
+                route: {cluster: backend|80}
+          http_filters:
+          - name: envoy.router
+  clusters:
+  - name: backend|80
+    connect_timeout: 0.25s
+    type: logical_dns
+    lb_policy: round_robin
+    load_assignment:
+      cluster_name: backend|80
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: backend.local  # [4]
+                port_value: 80
+  - name: hackndev.eu.auth0.com|443
+    connect_timeout: 0.25s
+    type: logical_dns
+    lb_policy: round_robin
+    load_assignment:
+      cluster_name: hackndev.eu.auth0.com|443
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: hackndev.eu.auth0.com  # [1]
+                port_value: 443
+    transport_socket:
+      name: envoy.transport_sockets.tls
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+        sni: hackndev.eu.auth0.com  # [2]
+        common_tls_context:
+          validation_context:
+            match_subject_alt_names:
+            - exact: "*.eu.auth0.com"  # [3]
+            trusted_ca:
+              filename: /etc/ssl/certs/ca-certificates.crt

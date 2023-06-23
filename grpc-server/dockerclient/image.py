@@ -1,6 +1,7 @@
 import io
 from typing import Generator
 
+from docker.errors import ImageNotFound
 from dockerclient.client import cli
 
 
@@ -15,3 +16,11 @@ def build_image(name: str, dockerfile: bytes, tag: str) -> Generator[str, None, 
 
 def push_image():
     pass
+
+
+def check_image_exists(name: str, tag: str) -> bool:
+    try:
+        cli.images.get(f"{name}:{tag}")
+        return True
+    except ImageNotFound:
+        return False
