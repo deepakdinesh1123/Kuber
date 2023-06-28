@@ -1,6 +1,19 @@
+import traceback
+
+import definitions.execute_pb2 as exe_pb2
 import definitions.execute_pb2_grpc as exe_grpc
+from dockerclient.execute import execute_command
+from utils.logger import log_debug
 
 
 class Execute(exe_grpc.ExecuteServicer):
-    def executeCommand(self, request, context):
-        return super().executeCommand(request, context)
+    async def executeCommand(self, request, context):
+        try:
+            res = execute_command(
+                name=request.container_name, cmd=request.command, dir=request.dir
+            )
+            for line in res.output:
+                yield exe_pb2.ExecutionResponse(message=line)
+        except Exception:
+            traceback.print_exc()
+            pass

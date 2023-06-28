@@ -3,7 +3,7 @@ syntax="proto3";
 package environment;
 
 service environment {
-    rpc createEnvironment(EnvironmentRequest) returns (stream EnvCreationResponse) {}
+    rpc createEnvironment(EnvironmentRequest) returns (EnvCreationResponse) {}
     rpc deleteEnvironment(EnvModReq) returns (Response) {}
     rpc stopEnvironment(EnvModReq) returns (Response) {}
 }
@@ -25,7 +25,7 @@ message EnvModReq {
 message EnvCreationResponse {
     string message = 1;
     repeated string containers = 2;
-    string token = 3;
+    bool success = 3;
 }
 
 message Response {

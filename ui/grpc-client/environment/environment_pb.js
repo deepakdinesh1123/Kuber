@@ -106,7 +106,7 @@ if (goog.DEBUG && !COMPILED) {
  * @private {!Array<number>}
  * @const
  */
-proto.environment.EnvironmentRequest.repeatedFields_ = [3,4];
+proto.environment.EnvironmentRequest.repeatedFields_ = [4,5];
 
 
 
@@ -140,9 +140,12 @@ proto.environment.EnvironmentRequest.prototype.toObject = function(opt_includeIn
 proto.environment.EnvironmentRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
     name: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    config: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    imagesList: (f = jspb.Message.getRepeatedField(msg, 3)) == null ? undefined : f,
-    filesList: msg.getFilesList_asB64()
+    tag: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    config: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    imagesList: (f = jspb.Message.getRepeatedField(msg, 4)) == null ? undefined : f,
+    filesList: (f = jspb.Message.getRepeatedField(msg, 5)) == null ? undefined : f,
+    type: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    projectName: jspb.Message.getFieldWithDefault(msg, 7, "")
   };
 
   if (includeInstance) {
@@ -185,15 +188,27 @@ proto.environment.EnvironmentRequest.deserializeBinaryFromReader = function(msg,
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setConfig(value);
+      msg.setTag(value);
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
-      msg.addImages(value);
+      msg.setConfig(value);
       break;
     case 4:
-      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      var value = /** @type {string} */ (reader.readString());
+      msg.addImages(value);
+      break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
       msg.addFiles(value);
+      break;
+    case 6:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setType(value);
+      break;
+    case 7:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setProjectName(value);
       break;
     default:
       reader.skipField();
@@ -231,24 +246,45 @@ proto.environment.EnvironmentRequest.serializeBinaryToWriter = function(message,
       f
     );
   }
-  f = message.getConfig();
+  f = message.getTag();
   if (f.length > 0) {
     writer.writeString(
       2,
       f
     );
   }
-  f = message.getImagesList();
+  f = message.getConfig();
   if (f.length > 0) {
-    writer.writeRepeatedString(
+    writer.writeString(
       3,
       f
     );
   }
-  f = message.getFilesList_asU8();
+  f = message.getImagesList();
   if (f.length > 0) {
-    writer.writeRepeatedBytes(
+    writer.writeRepeatedString(
       4,
+      f
+    );
+  }
+  f = message.getFilesList();
+  if (f.length > 0) {
+    writer.writeRepeatedString(
+      5,
+      f
+    );
+  }
+  f = message.getType();
+  if (f.length > 0) {
+    writer.writeString(
+      6,
+      f
+    );
+  }
+  f = message.getProjectName();
+  if (f.length > 0) {
+    writer.writeString(
+      7,
       f
     );
   }
@@ -274,10 +310,10 @@ proto.environment.EnvironmentRequest.prototype.setName = function(value) {
 
 
 /**
- * optional string config = 2;
+ * optional string tag = 2;
  * @return {string}
  */
-proto.environment.EnvironmentRequest.prototype.getConfig = function() {
+proto.environment.EnvironmentRequest.prototype.getTag = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -286,17 +322,35 @@ proto.environment.EnvironmentRequest.prototype.getConfig = function() {
  * @param {string} value
  * @return {!proto.environment.EnvironmentRequest} returns this
  */
-proto.environment.EnvironmentRequest.prototype.setConfig = function(value) {
+proto.environment.EnvironmentRequest.prototype.setTag = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * repeated string images = 3;
+ * optional string config = 3;
+ * @return {string}
+ */
+proto.environment.EnvironmentRequest.prototype.getConfig = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.environment.EnvironmentRequest} returns this
+ */
+proto.environment.EnvironmentRequest.prototype.setConfig = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * repeated string images = 4;
  * @return {!Array<string>}
  */
 proto.environment.EnvironmentRequest.prototype.getImagesList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 3));
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 4));
 };
 
 
@@ -305,7 +359,7 @@ proto.environment.EnvironmentRequest.prototype.getImagesList = function() {
  * @return {!proto.environment.EnvironmentRequest} returns this
  */
 proto.environment.EnvironmentRequest.prototype.setImagesList = function(value) {
-  return jspb.Message.setField(this, 3, value || []);
+  return jspb.Message.setField(this, 4, value || []);
 };
 
 
@@ -315,7 +369,7 @@ proto.environment.EnvironmentRequest.prototype.setImagesList = function(value) {
  * @return {!proto.environment.EnvironmentRequest} returns this
  */
 proto.environment.EnvironmentRequest.prototype.addImages = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 3, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 4, value, opt_index);
 };
 
 
@@ -329,54 +383,30 @@ proto.environment.EnvironmentRequest.prototype.clearImagesList = function() {
 
 
 /**
- * repeated bytes files = 4;
+ * repeated string files = 5;
  * @return {!Array<string>}
  */
 proto.environment.EnvironmentRequest.prototype.getFilesList = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 4));
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 5));
 };
 
 
 /**
- * repeated bytes files = 4;
- * This is a type-conversion wrapper around `getFilesList()`
- * @return {!Array<string>}
- */
-proto.environment.EnvironmentRequest.prototype.getFilesList_asB64 = function() {
-  return /** @type {!Array<string>} */ (jspb.Message.bytesListAsB64(
-      this.getFilesList()));
-};
-
-
-/**
- * repeated bytes files = 4;
- * Note that Uint8Array is not supported on all browsers.
- * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getFilesList()`
- * @return {!Array<!Uint8Array>}
- */
-proto.environment.EnvironmentRequest.prototype.getFilesList_asU8 = function() {
-  return /** @type {!Array<!Uint8Array>} */ (jspb.Message.bytesListAsU8(
-      this.getFilesList()));
-};
-
-
-/**
- * @param {!(Array<!Uint8Array>|Array<string>)} value
+ * @param {!Array<string>} value
  * @return {!proto.environment.EnvironmentRequest} returns this
  */
 proto.environment.EnvironmentRequest.prototype.setFilesList = function(value) {
-  return jspb.Message.setField(this, 4, value || []);
+  return jspb.Message.setField(this, 5, value || []);
 };
 
 
 /**
- * @param {!(string|Uint8Array)} value
+ * @param {string} value
  * @param {number=} opt_index
  * @return {!proto.environment.EnvironmentRequest} returns this
  */
 proto.environment.EnvironmentRequest.prototype.addFiles = function(value, opt_index) {
-  return jspb.Message.addToRepeatedField(this, 4, value, opt_index);
+  return jspb.Message.addToRepeatedField(this, 5, value, opt_index);
 };
 
 
@@ -386,6 +416,42 @@ proto.environment.EnvironmentRequest.prototype.addFiles = function(value, opt_in
  */
 proto.environment.EnvironmentRequest.prototype.clearFilesList = function() {
   return this.setFilesList([]);
+};
+
+
+/**
+ * optional string type = 6;
+ * @return {string}
+ */
+proto.environment.EnvironmentRequest.prototype.getType = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.environment.EnvironmentRequest} returns this
+ */
+proto.environment.EnvironmentRequest.prototype.setType = function(value) {
+  return jspb.Message.setProto3StringField(this, 6, value);
+};
+
+
+/**
+ * optional string project_name = 7;
+ * @return {string}
+ */
+proto.environment.EnvironmentRequest.prototype.getProjectName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.environment.EnvironmentRequest} returns this
+ */
+proto.environment.EnvironmentRequest.prototype.setProjectName = function(value) {
+  return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 
