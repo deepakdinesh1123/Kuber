@@ -1,12 +1,35 @@
+import traceback
+
 import definitions.files_pb2 as fil
 import definitions.files_pb2_grpc as fil_grpc
-from dockerclient import container
+from docker.errors import NotFound
+from dockerclient import container, files
+from utils.logger import log_error
 
 
 class File(fil_grpc.FilesServicer):
-    def copyFilesToContainer(self, request_iterator, context):
-        for request in request_iterator:
-            container.copy_file_to_container(
-                name=request.container, path=request.File.name, file=request.File.path
+    def copyFileToContainer(self, request, context):
+        try:
+            res = files.upsert_file(
+                container_name=request.container_name,
+                path=request.path,
+                file_name=request.file_name,
+                file_content=request.file_content,
             )
-        return fil.CopyResponse(success=True)
+            return fil.CopyResponse(success=res)
+        except Exception:
+            log_error(traceback.format_exc())
+            return fil.CopyResponse(success=False)
+
+    def getFile(self, request, context):
+        try:
+            res = files.get_file(
+                container_name=request.container_name,
+                file_name=request.file_name,
+                path=request.path,
+            )
+        except NotFound:
+            yield fil.FilesResponse(line="Container not found")
+            return
+        for line in res.output:
+            yield fil.FilesResponse(line=line)
