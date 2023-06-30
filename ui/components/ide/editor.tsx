@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import 'monaco-editor/esm/vs/basic-languages/python/python.contribution';
 import 'monaco-editor/esm/vs/editor/editor.all.js';
+import { registerfileLanguage } from '../../utils/lang_support/lang_reg.js'
 
 type MonacoEditorProps = {
   value: string;
@@ -27,27 +28,19 @@ const MonacoEditor = ({ value, onChange, language, width, height }: MonacoEditor
     null
   );
 
-  // monaco.languages.register({ id: language});
-  // fetch(`${process.env.NEXT_PUBLIC_HOST}/api/monarch_config/${language}`, {
-  //   method: "GET",
-  //   headers: {
-  //     'Authorization': `Bearer ${Cookies.get("access_token")}`
-  //   }
-  // }).then(res => res.text()).then(res_text => {
-  //   monaco.languages.setTokensProvider(language, JSON.parse(res_text));
-  // }).catch(error => console.log(error));
-
   useEffect(() => {
+    registerfileLanguage();
     // initialize the Monaco editor
     editorRef.current = monaco.editor.create(
       document.getElementById('monaco-editor')!,
       {
         theme: 'vs-dark',
-        // language: language,
+        language: language,
         value: value
 
       }
     );
+    monaco.editor.setTheme('vs-dark');
 
     // listen for changes
     editorRef.current.onDidChangeModelContent(() => {
