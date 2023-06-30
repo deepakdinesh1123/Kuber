@@ -5,10 +5,12 @@ from definitions.container_pb2_grpc import add_ContainersServicer_to_server
 from definitions.environment_pb2_grpc import add_environmentServicer_to_server
 from definitions.files_pb2_grpc import add_FilesServicer_to_server
 from definitions.image_pb2_grpc import add_ImagesServicer_to_server
+from definitions.retrieve_pb2_grpc import add_DataServiceServicer_to_server
 from servicers.container import Container
 from servicers.environment import Environment
 from servicers.files import File
 from servicers.image import Image
+from servicers.retrieve import DataServiceServicer
 
 
 async def serve() -> None:
@@ -17,6 +19,7 @@ async def serve() -> None:
     add_ImagesServicer_to_server(Image(), server)
     add_FilesServicer_to_server(File(), server)
     add_environmentServicer_to_server(Environment(), server)
+    add_DataServiceServicer_to_server(DataServiceServicer(), server)
     listener_addr = "[::]:9000"
     server.add_insecure_port(listener_addr)
     await server.start()
