@@ -3,11 +3,13 @@ import asyncio
 import grpc
 from definitions.container_pb2_grpc import add_ContainersServicer_to_server
 from definitions.environment_pb2_grpc import add_environmentServicer_to_server
+from definitions.execute_pb2_grpc import add_ExecuteServicer_to_server
 from definitions.files_pb2_grpc import add_FilesServicer_to_server
 from definitions.image_pb2_grpc import add_ImagesServicer_to_server
 from definitions.retrieve_pb2_grpc import add_DataServiceServicer_to_server
 from servicers.container import Container
 from servicers.environment import Environment
+from servicers.execute import Execute
 from servicers.files import File
 from servicers.image import Image
 from servicers.retrieve import DataServiceServicer
@@ -20,9 +22,14 @@ async def serve() -> None:
     add_FilesServicer_to_server(File(), server)
     add_environmentServicer_to_server(Environment(), server)
     add_DataServiceServicer_to_server(DataServiceServicer(), server)
+    add_ExecuteServicer_to_server(Execute(), server)
     listener_addr = "[::]:9000"
     server.add_insecure_port(listener_addr)
-    await server.start()
+    try:
+        await server.start()
+        print("Server started on port 9000")
+    except Exception as e:
+        print(str(e))
     try:
         await server.wait_for_termination()
     except KeyboardInterrupt:
