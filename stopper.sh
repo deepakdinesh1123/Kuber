@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set the image name to identify the containers to stop and remove
-image_name="why:latest"
+image_name="dota:1.0"
 
 # Stop and remove containers based on the image name
 container_ids=$(docker ps -a --filter "ancestor=$image_name" -q)

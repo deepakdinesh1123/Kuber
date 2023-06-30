@@ -1,6 +1,8 @@
 import json
+import traceback
 
 from django.shortcuts import render
+from grpc_client.environment import create_environment
 from rest_framework import status
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
@@ -52,46 +54,31 @@ class Environment(APIView):
         data = request.data
         log_debug(data)
         if action == "createEnvironment":
-            log_debug("lol")
-            """
-                data = {
-                    "name": name,
-                    "config": {
-                        "workdir": directory,
-                        "display": {
-                            "container_1": "IDE, Terminal"
-                        },
-                        "ports": {
-                            "container_1": [90, 80]
-                        },
-                        "volumes": {
-                            "container_1: []
-                        },
-                        "dockerfiles": [
-                            {
-                                "file_name": name,
-                                "content": file_content
-                            }
-                        ],
-                        "network": network
-                    },
-                    "images": []
-                }
-            """
             try:
+                resp = create_environment(
+                    name=data["name"],
+                    tag="1.0",
+                    config=data["config"],
+                    images=data["images"],
+                    type=data["type"],
+                    files=data["files"],
+                    projectName=data["project_name"],
+                )
+                if resp is None:
+                    raise
                 env = DockerEnvironment(
                     env_name=data["name"],
                     config=data["config"],
                     images=data["images"],
                     creator=user,
                 )
-                log_debug(env)
                 env.save()
-                rel = UserDockerEnvironments(creator=user, docker_env=env)
-                rel.save()
-                return get_api_response("env created", status=200, success=False)
+                log_debug(f"{str(resp)}")
+                # rel = UserDockerEnvironments(creator=user, docker_env=env)
+                # rel.save()
+                return get_api_response(str(resp), status=200, success=True)
             except Exception as e:
-                log_error(str(e))
+                log_error(traceback.format_exc())
                 return get_api_response(str(e), status=400, success=False)
 
     def get_permissions(self):

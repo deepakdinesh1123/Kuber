@@ -12,22 +12,6 @@ message ExecuteRequest {
     string dir = 3;
 }
 
-message ExecutionSuccess {
-    string result = 1;
-}
-
-message ExecutionOutput {
-    string output = 1;
-}
-
-message Error {
-    string error = 1;
-}
-
 message ExecutionResponse {
-    oneof responses {
-        ExecutionSuccess success = 1;
-        Error error = 2;
-        ExecutionOutput output = 3;
-    }
+    string message = 1;
 }
