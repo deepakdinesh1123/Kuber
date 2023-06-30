@@ -120,19 +120,4 @@ def retrieve_information(user: str, env_name: str = None):
         return json.dumps({"error": f"No information found for user {user}"}, indent=4)
 
 
-# Example usage:
-data = {"env_name": "env", "containers": ["nippy-cinnabar-ostrich"]}
 
-user = "user"
-# env = "env"
-
-# upsert_containers(data, user)
-
-# Database.delete_container("nippy-cinnabar-ostrich", "env_new", user)
-
-# Database.delete_environment("env", user)
-
-# Database.delete_user(user)
-
-information = retrieve_information(user)
-print(information)
