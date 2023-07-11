@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package data_service;
+
+service DataService {
+    rpc RetrieveInformation(RetrieveInformationRequest) returns (RetrieveInformationResponse) {}
+}
+
+message RetrieveInformationRequest {
+    string user = 1;
+    string env_name = 2;
+}
+
+message RetrieveInformationResponse {
+    string json_data = 1;
+}

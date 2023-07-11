@@ -5,7 +5,7 @@ from docker.errors import ImageNotFound
 from dockerclient.client import cli
 
 
-def build_image(name: str, dockerfile: bytes, tag: str) -> Generator[str, None, None]:
+def build_image(name: str, dockerfile, tag: str) -> Generator[str, None, None]:
     docker_file = io.BytesIO(
         dockerfile.encode("utf-8")
     )  # converts the contents of the dockefile string into a File like object

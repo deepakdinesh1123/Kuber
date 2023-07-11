@@ -1,6 +1,5 @@
 import React, { useState, useEffect, SyntheticEvent } from 'react';
 import dynamic from "next/dynamic";
-import { handleCreateEnvironment, getMachine } from '@/utils/service/environment';
 
 const MonacoEditor = dynamic(() => import('../../components/ide/editor'), {
     ssr: false
@@ -8,23 +7,13 @@ const MonacoEditor = dynamic(() => import('../../components/ide/editor'), {
 
 export default function CreateEnvironment() {
 
-    const [envData, setenvData] = useState({
-        name: '',
-        type: '',
-        image_name: '',
-        image_tag: ''
-      });
+    const [env, setEnv] = useState('');
     const [fileContent, setFileContent] = useState("");
     const [config, setConfig] = useState("Enter your config");
-    const [configureEnv, setConfigureEnv] = useState(true);
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setenvData((prevenvData) => ({
-          ...prevenvData,
-          [name]: value
-        }));
-      };
+    const handleEnvChange = (event: SyntheticEvent) => {
+        setEnv(event.target.value);
+    }
 
     const handleConfigChange = (event: SyntheticEvent) => {
         setConfig(event.target.value);
@@ -37,84 +26,8 @@ export default function CreateEnvironment() {
         }
     }
 
+    const handleSubmit = () => {
 
-
-    const EnvDetailsForm = ()=> {
-        return (
-            <form>
-      <label>
-        Environment Name:
-        <input
-          type="text"
-          name="name"
-          value={envData.name}
-          onChange={handleChange}
-        />
-      </label>
-      <br />
-      <label>
-        Environment Type:
-        <select onChange={handleChange}>
-            <option value="default">Select Environemnt Type</option>
-            <option value="docker">Docker</option>
-            <option value="compose">Docker Compose</option>
-        </select>
-      </label>
-      <br />
-      <label>
-        Image Name:
-        <input
-          name="message"
-          value={envData.image_name}
-          onChange={handleChange}
-        />
-      </label>
-      <br />
-      <label>
-        Image Tag:
-        <input
-          name="message"
-          value={envData.image_tag}
-          onChange={handleChange}
-        />
-      </label>
-      <br />
-      <button onClick={ () => {setConfigureEnv(false)}}>Configure Docker</button>
-    </form>
-        );
-    }
-
-    const DockerConfig = () => {
-         return (
-            <>
-                <button type='button' onClick={handleSubmit}> Submit</button>
-                <div style={{"display": "flex"}}>
-                <MonacoEditor value={"# Enter your dockerfile "} onChange={handleCodeChange} language='Docker' width='80%'/>
-                <textarea
-                    style={{ backgroundColor: "black", caretColor: "white", width: "20%", height: "auto", color: "white"}}
-                    onKeyDown={handleTextAreaKeyDown}
-                    value={config}
-                    onChange={handleConfigChange}
-                >
-                </textarea>
-            </div>
-        </>);
-    }
-
-    const handleSubmit = (event) => {
-        const request = {
-                data:  {
-                "name": envData.name,
-                "config": config,
-                "images": [`${envData.image_name}`],
-                "type": envData.type
-
-            },
-            type: "POST",
-            url: "/environment/api/v1/createEnvironment/"
-        }
-        const resp = handleCreateEnvironment(request);
-        console.log(resp);
     }
 
     const handleCodeChange = (content: string) => {
@@ -141,7 +54,18 @@ export default function CreateEnvironment() {
 
     return (
     <>
-        { configureEnv ? <EnvDetailsForm/> : <DockerConfig/> }
+        <input type='text' placeholder='Enter the name of the environment' onChange={handleEnvChange}></input>
+        <button type='button' onClick={handleSubmit}> Submit</button>
+        <div style={{"display": "flex"}}>
+            <MonacoEditor value={"# Enter your dockerfile "} onChange={handleCodeChange} language='Docker' width='80%'/>
+            <textarea
+                style={{ backgroundColor: "black", caretColor: "white", width: "20%", height: "auto", color: "white"}}
+                onKeyDown={handleTextAreaKeyDown}
+                value={config}
+                onChange={handleConfigChange}
+            >
+            </textarea>
+        </div>
     </>
     )
 }
