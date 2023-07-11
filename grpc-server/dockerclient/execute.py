@@ -1,11 +1,11 @@
 import traceback
-from typing import Generator
 
+from docker.models.containers import ExecResult
 from dockerclient import container
 from utils.logger import log_debug
 
 
-def execute_command(name: str, cmd: str, dir: str) -> Generator[str, None, None]:
+def execute_command(name: str, cmd: str, dir: str) -> ExecResult:
     try:
         cont = container.get_container(name=name)
         log_debug(cont)

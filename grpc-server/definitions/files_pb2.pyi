@@ -1,12 +1,40 @@
-from typing import (
-    ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Mapping,
-    Optional as _Optional, Union as _Union,
-)
-
-from google.protobuf import descriptor as _descriptor, message as _message
-from google.protobuf.internal import containers as _containers
+from google.protobuf import descriptor as _descriptor
+from google.protobuf import message as _message
+from typing import ClassVar as _ClassVar, Optional as _Optional
 
 DESCRIPTOR: _descriptor.FileDescriptor
+
+class File(_message.Message):
+    __slots__ = ["file_name", "path", "container_name", "file_content"]
+    FILE_NAME_FIELD_NUMBER: _ClassVar[int]
+    PATH_FIELD_NUMBER: _ClassVar[int]
+    CONTAINER_NAME_FIELD_NUMBER: _ClassVar[int]
+    FILE_CONTENT_FIELD_NUMBER: _ClassVar[int]
+    file_name: str
+    path: str
+    container_name: str
+    file_content: str
+    def __init__(self, file_name: _Optional[str] = ..., path: _Optional[str] = ..., container_name: _Optional[str] = ..., file_content: _Optional[str] = ...) -> None: ...
+
+class FileDetails(_message.Message):
+    __slots__ = ["container_name", "file_name", "path"]
+    CONTAINER_NAME_FIELD_NUMBER: _ClassVar[int]
+    FILE_NAME_FIELD_NUMBER: _ClassVar[int]
+    PATH_FIELD_NUMBER: _ClassVar[int]
+    container_name: str
+    file_name: str
+    path: str
+    def __init__(self, container_name: _Optional[str] = ..., file_name: _Optional[str] = ..., path: _Optional[str] = ...) -> None: ...
+
+class FolderDetails(_message.Message):
+    __slots__ = ["container_name", "folder_name", "path"]
+    CONTAINER_NAME_FIELD_NUMBER: _ClassVar[int]
+    FOLDER_NAME_FIELD_NUMBER: _ClassVar[int]
+    PATH_FIELD_NUMBER: _ClassVar[int]
+    container_name: str
+    folder_name: str
+    path: str
+    def __init__(self, container_name: _Optional[str] = ..., folder_name: _Optional[str] = ..., path: _Optional[str] = ...) -> None: ...
 
 class CopyResponse(_message.Message):
     __slots__ = ["success"]
@@ -14,24 +42,14 @@ class CopyResponse(_message.Message):
     success: bool
     def __init__(self, success: bool = ...) -> None: ...
 
-class File(_message.Message):
-    __slots__ = ["name", "path"]
-    NAME_FIELD_NUMBER: _ClassVar[int]
-    PATH_FIELD_NUMBER: _ClassVar[int]
-    name: str
-    path: str
-    def __init__(
-        self, name: _Optional[str] = ..., path: _Optional[str] = ...
-    ) -> None: ...
+class FilesResponse(_message.Message):
+    __slots__ = ["line"]
+    LINE_FIELD_NUMBER: _ClassVar[int]
+    line: str
+    def __init__(self, line: _Optional[str] = ...) -> None: ...
 
-class FilesToCopy(_message.Message):
-    __slots__ = ["container", "file"]
-    CONTAINER_FIELD_NUMBER: _ClassVar[int]
-    FILE_FIELD_NUMBER: _ClassVar[int]
-    container: str
-    file: _containers.RepeatedCompositeFieldContainer[File]
-    def __init__(
-        self,
-        container: _Optional[str] = ...,
-        file: _Optional[_Iterable[_Union[File, _Mapping]]] = ...,
-    ) -> None: ...
+class DirectoryStrcuture(_message.Message):
+    __slots__ = ["yaml_rep"]
+    YAML_REP_FIELD_NUMBER: _ClassVar[int]
+    yaml_rep: str
+    def __init__(self, yaml_rep: _Optional[str] = ...) -> None: ...

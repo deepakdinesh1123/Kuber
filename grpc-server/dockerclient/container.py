@@ -19,9 +19,3 @@ def get_container(name: str) -> Container:
         return container
     except errors.NotFound:
         return None
-
-
-def copy_file_to_container(name: str, path: str, file: bytes) -> bool:
-    container = get_container(name)
-    container.put_archive(path, file)
-    return True

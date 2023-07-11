@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 from utils.logger import log_debug, log_error
 from utils.response import get_api_response
 
-from .models import DockerEnvironment, UserDockerEnvironments
+from .models import Environment, Sandbox
 from .serializers import DockerEnvironmentSerializer
 
 
@@ -35,7 +35,7 @@ class DockerImage(APIView):
         pass
 
 
-class Environment(APIView):
+class EnvironmentView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request: Request, action: str, *args, **kwargs) -> Response:
@@ -43,7 +43,7 @@ class Environment(APIView):
 
         if action == "getEnvironments":
             try:
-                envs = DockerEnvironment.objects.filter(creator=user)
+                envs = Environment.objects.filter(creator=user)
                 serializer = DockerEnvironmentSerializer(envs, many=True)
             except Exception as e:
                 return get_api_response(str(e), status=400, success=False)
@@ -53,33 +53,43 @@ class Environment(APIView):
         user = request.user
         data = request.data
         log_debug(data)
-        if action == "createEnvironment":
+        if action == "create":
             try:
-                resp = create_environment(
-                    name=data["name"],
-                    tag="1.0",
-                    config=data["config"],
-                    images=data["images"],
-                    type=data["type"],
-                    files=data["files"],
-                    projectName=data["project_name"],
-                )
-                if resp is None:
-                    raise
-                env = DockerEnvironment(
+                private = data.get("private", False)
+                env = Environment(
                     env_name=data["name"],
                     config=data["config"],
                     images=data["images"],
                     creator=user,
+                    private=private,
+                    type=data["type"],
                 )
                 env.save()
-                log_debug(f"{str(resp)}")
-                # rel = UserDockerEnvironments(creator=user, docker_env=env)
-                # rel.save()
-                return get_api_response(str(resp), status=200, success=True)
+                return get_api_response("Environment created", status=200, success=True)
             except Exception as e:
                 log_error(traceback.format_exc())
                 return get_api_response(str(e), status=400, success=False)
+
+        if action == "start":
+            env_id = data["env_id"]
+            try:
+                env = Environment.objects.get(env_id=env_id)
+            except Exception:
+                return get_api_response(
+                    "Environment does not exist", status=400, success=False
+                )
+            resp = create_environment(
+                name=env.env_name,
+                tag="1.0",
+                config=env.config,
+                images=env.images,
+                type=env.type,
+                files=env,
+                projectName=data["project_name"],
+            )
+
+            if resp is None:
+                raise
 
     def get_permissions(self):
         if self.request.method == "DELETE":
