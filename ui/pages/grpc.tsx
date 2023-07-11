@@ -11,13 +11,13 @@ const MyPage = () => {
     const executeRequest = new ExecuteRequest();
     executeRequest.setContainerName("Something");
     executeRequest.setCommand("ls");
-    // console.log(executeRequest);
-    // client.executeCommand(executeRequest, null, (err: any, response: any) => {
-    //   if (err) return console.log(err);
-    //   // const error = response.getError();
-    //   // const msg = response.getMsg();
-    //   console.log(response.getSuccess());
-    // });
+    console.log(executeRequest);
+    client.executeCommand(executeRequest, null, (err: any, response: any) => {
+      if (err) return console.log(err);
+      const error = response.getError();
+      const msg = response.getMsg();
+      console.log(response.getSuccess());
+    });
     var stream = client.executeCommandStream(executeRequest);
       stream.on('data', function(response: any) {
         console.log(response.getOutput().array);

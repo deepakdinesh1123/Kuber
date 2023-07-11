@@ -52,9 +52,11 @@ class KuberUser(AbstractUser):
         return self.username
 
 
-class UserRole(models.Model):
+class Role(models.Model):
     role_id = models.UUIDField(
         primary_key=True, default=uuid4, name="role_id", editable=False
     )
-    role_name = models.CharField(max_length=20, editable=False, name="role_name")
-    permissions = models.JSONField()
+    role_name = models.CharField(
+        max_length=20, editable=False, name="role_name", unique=True
+    )
+    permissions = models.JSONField(unique=True, editable=False)
