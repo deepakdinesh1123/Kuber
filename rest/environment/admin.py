@@ -1,6 +1,6 @@
 from django.contrib import admin
-from environment.models import DockerEnvironment, UserDockerEnvironments
+from environment.models import Environment, Sandbox
 
 # Register your models here.
-admin.site.register(DockerEnvironment)
-admin.site.register(UserDockerEnvironments)
+admin.site.register(Environment)
+admin.site.register(Sandbox)
