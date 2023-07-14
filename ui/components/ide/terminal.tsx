@@ -7,11 +7,9 @@ import "xterm/css/xterm.css";
 
 let term;
 
-
 const fitAddon = new FitAddon();
 
 export default function XTerminal(props) {
-
   const openInitTerminal = () => {
     const terminalContainer = document.getElementById("xterm");
     while (terminalContainer.children.length) {
@@ -26,7 +24,7 @@ export default function XTerminal(props) {
       fontFamily: `'Fira Mono', monospace`,
       fontSize: 16,
       fontWeight: 400,
-      rendererType: "canvas"
+      rendererType: "canvas",
     });
 
     term.loadAddon(fitAddon);
@@ -41,7 +39,7 @@ export default function XTerminal(props) {
     term.focus();
     term.write("$");
 
-    term.onKey(key => {
+    term.onKey((key) => {
       const char = key.domEvent.key;
       if (char === "Enter") {
         props.onKeyDown("Enter", term);
@@ -53,9 +51,7 @@ export default function XTerminal(props) {
         term.write(char);
       }
     });
-
   };
-
 
   const windowChange = () => {
     fitAddon.fit();
@@ -67,7 +63,7 @@ export default function XTerminal(props) {
 
   return (
     <div className="freeaiterm-wrap">
-      <div id="xterm" style={{ height: "350px", width: "100%" }}/>
+      <div id="xterm" style={{ height: "350px", width: "100%" }} />
     </div>
-  )
+  );
 }
