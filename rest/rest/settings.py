@@ -155,3 +155,5 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=20),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
 }
+
+JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")

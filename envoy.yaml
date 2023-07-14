@@ -16,12 +16,21 @@ static_resources:
                   - name: local_service
                     domains: ["*"]
                     routes:
+                      - match: { prefix: "/auth"}
+                        route:
+                          cluster: auth_server
+                          timeout: 0s
+                      - match: { prefix: "/api" }
+                        route:
+                          cluster: rest_api
+                          timeout: 0s
                       - match: { prefix: "/" }
                         route:
-                          cluster: echo_service
+                          cluster: grpc_server
                           timeout: 0s
                           max_stream_duration:
                             grpc_timeout_header_max: 0s
+
                     cors:
                       allow_origin_string_match:
                         - prefix: "*"
@@ -40,7 +49,7 @@ static_resources:
                   typed_config:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
   clusters:
-    - name: echo_service
+    - name: grpc_server
       connect_timeout: 0.25s
       type: logical_dns
       http2_protocol_options: {}
