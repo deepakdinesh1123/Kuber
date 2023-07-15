@@ -1,5 +1,6 @@
 import asyncio
 
+import dotenv
 import grpc
 from definitions.container_pb2_grpc import add_ContainersServicer_to_server
 from definitions.environment_pb2_grpc import add_environmentServicer_to_server
@@ -8,6 +9,7 @@ from definitions.files_pb2_grpc import add_FilesServicer_to_server
 from definitions.image_pb2_grpc import add_ImagesServicer_to_server
 from definitions.logs_pb2_grpc import add_LogsServicer_to_server
 from definitions.retrieve_pb2_grpc import add_DataServiceServicer_to_server
+from interceptors.authorize import JWTInterceptor
 from servicers.container import Container
 from servicers.environment import Environment
 from servicers.execute import Execute
@@ -16,8 +18,11 @@ from servicers.image import Image
 from servicers.logs import Logs
 from servicers.retrieve import DataServiceServicer
 
+
 async def serve() -> None:
-    server = grpc.aio.server()
+    dotenv.load_dotenv()
+    interceptors = [JWTInterceptor()]
+    server = grpc.aio.server(interceptors=interceptors)
     add_ContainersServicer_to_server(Container(), server)
     add_ImagesServicer_to_server(Image(), server)
     add_FilesServicer_to_server(File(), server)

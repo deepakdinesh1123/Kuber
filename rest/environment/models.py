@@ -5,6 +5,12 @@ from django.db import models
 from user.models import KuberUser, Role
 
 ENVIRONMENT_CHOICES = (("compose", "docker-compose"), ("docker", "docker"))
+CATEGORY_CHOICES = (("p", "p"), ("g", "g"))
+SANDBOX_ACTIONS = (
+    ("create", "Create Sandbox"),
+    ("delete", "Delete Sandbox"),
+    ("execute", "Execute commands in sandbox"),
+)
 
 
 # Create your models here.
@@ -35,10 +41,9 @@ class Sandbox(models.Model):
         to_field="env_id",
         on_delete=models.CASCADE,
     )
-    user_role = models.ForeignKey(
-        to=Role, related_name="+", to_field="role_name", on_delete=models.PROTECT
-    )
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    name = models.CharField(max_length=100, unique=True)
+    private = models.BooleanField(default=False)
 
     class Meta:
         constraints = [
@@ -46,3 +51,15 @@ class Sandbox(models.Model):
                 fields=["sandbox_creator", "env"], name="user_env_pk"
             )
         ]
+
+
+# class SandboxPermissions(models.Model):
+#     category = models.CharField(max_length=1, choices=CATEGORY_CHOICES)
+#     sandbox = models.ForeignKey(Sandbox, related_name="+", to_field="name", on_delete=models.CASCADE)
+#     user = models.ForeignKey(KuberUser, related_name="+", to_field="id", on_delete=models.CASCADE)
+#     action = models.CharField(max_length=15, choices=SANDBOX_ACTIONS)
+
+# class EnvironmentPermissions(models.Model):
+#     category = models.CharField(max_length=1, choices=CATEGORY_CHOICES)
+#     environment = models.ForeignKey(Environment, related_name="+",
+# to_field="name", on_delete=models.CASCADE)
