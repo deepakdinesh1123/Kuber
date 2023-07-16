@@ -1,10 +1,14 @@
 import { AxiosRequest, AxiosResponse, handleApiRequest } from './api';
 
 
-export function handleCreateEnvironment(request: AxiosRequest): AxiosResponse {
-    return handleApiRequest(request);
+export async function handleCreateEnvironment(request: AxiosRequest): Promise<AxiosResponse> {
+    return await handleApiRequest(request);
 }
 
-export function getMachine(request: AxiosRequest): AxiosResponse {
-    return handleApiRequest(request);
+export async function getMachine(request: AxiosRequest): Promise<AxiosResponse> {
+    return await handleApiRequest(request);
+}
+
+export async function handleGetEnvironment(request: AxiosRequest): Promise<AxiosResponse> {
+    return await handleApiRequest(request);
 }

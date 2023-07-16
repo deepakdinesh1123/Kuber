@@ -3,20 +3,20 @@ import asyncio
 import dotenv
 import grpc
 from definitions.container_pb2_grpc import add_ContainersServicer_to_server
-from definitions.environment_pb2_grpc import add_environmentServicer_to_server
 from definitions.execute_pb2_grpc import add_ExecuteServicer_to_server
 from definitions.files_pb2_grpc import add_FilesServicer_to_server
 from definitions.image_pb2_grpc import add_ImagesServicer_to_server
 from definitions.logs_pb2_grpc import add_LogsServicer_to_server
 from definitions.retrieve_pb2_grpc import add_DataServiceServicer_to_server
+from definitions.sandbox_pb2_grpc import add_SandboxServicer_to_server
 from interceptors.authorize import JWTInterceptor
 from servicers.container import Container
-from servicers.environment import Environment
 from servicers.execute import Execute
 from servicers.files import File
 from servicers.image import Image
 from servicers.logs import Logs
 from servicers.retrieve import DataServiceServicer
+from servicers.sandbox import Sandbox
 
 
 async def serve() -> None:
@@ -26,7 +26,7 @@ async def serve() -> None:
     add_ContainersServicer_to_server(Container(), server)
     add_ImagesServicer_to_server(Image(), server)
     add_FilesServicer_to_server(File(), server)
-    add_environmentServicer_to_server(Environment(), server)
+    add_SandboxServicer_to_server(Sandbox(), server)
     add_DataServiceServicer_to_server(DataServiceServicer(), server)
     add_ExecuteServicer_to_server(Execute(), server)
     add_LogsServicer_to_server(Logs(), server)

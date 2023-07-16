@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 
 
 def add_import_statement(file_path):
@@ -39,3 +40,8 @@ def remove_migrations():
                     and obj != "__init__.py"
                 ):
                     os.remove(f"./rest/{folder}/migrations/{obj}")
+
+
+if __name__ == "__main__":
+    # action = sys.argv[1]
+    remove_migrations()

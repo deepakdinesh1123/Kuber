@@ -1,11 +1,11 @@
-from django.urls import path
-from environment.views import EnvironmentView, Machine
+from django.urls import re_path
+from environment.views import EnvironmentView, SandboxView
 
 urlpatterns = [
-    path(
-        "api/v1/environment/<str:action>/",
+    re_path(
+        "<str:action>/",
         EnvironmentView.as_view(),
         name="environment-api",
     ),
-    path("machine/api/v1/<str:action>/", Machine.as_view(), name="machine-api"),
+    re_path("sandbox/<str:action>/", SandboxView.as_view(), name="sandbox-api"),
 ]

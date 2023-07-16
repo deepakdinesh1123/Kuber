@@ -21,11 +21,15 @@
 
 # print(user.dict())
 
-import io
+# import io
 
-import docker
+# import docker
 
-client = docker.from_env()
+# client = docker.from_env()
 
-fil = io.BytesIO(b"FROM python:3.10")
-client.images.build(fileobj=fil, tag="kuber-test")
+# fil = io.BytesIO(b"FROM python:3.10")
+# client.images.build(fileobj=fil, tag="kuber-test")
+
+import sys
+
+print(sys.argv)

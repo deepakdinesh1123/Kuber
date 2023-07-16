@@ -2,7 +2,7 @@ import json
 import traceback
 
 from django.shortcuts import render
-from grpc_client.environment import create_environment
+from grpc_client.sandbox import create_sandbox
 from rest_framework import status
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
@@ -36,14 +36,10 @@ class DockerImage(APIView):
 
 
 class EnvironmentView(APIView):
-    permission_classes = [IsAuthenticated]
-
     def get(self, request: Request, action: str, *args, **kwargs) -> Response:
-        user = request.user
-
         if action == "getEnvironments":
             try:
-                envs = Environment.objects.filter(creator=user)
+                envs = Environment.objects.all()
                 serializer = DockerEnvironmentSerializer(envs, many=True)
             except Exception as e:
                 return get_api_response(str(e), status=400, success=False)
@@ -70,36 +66,8 @@ class EnvironmentView(APIView):
                 log_error(traceback.format_exc())
                 return get_api_response(str(e), status=400, success=False)
 
-        if action == "start":
-            env_id = data["env_id"]
-            try:
-                env = Environment.objects.get(env_id=env_id)
-            except Exception:
-                return get_api_response(
-                    "Environment does not exist", status=400, success=False
-                )
-            resp = create_environment(
-                name=env.env_name,
-                tag="1.0",
-                config=env.config,
-                images=env.images,
-                type=env.type,
-                files=env,
-                projectName=data["project_name"],
-            )
-
-            if resp is None:
-                raise
-
-    def get_permissions(self):
-        if self.request.method == "DELETE":
-            self.permission_classes = [IsAuthenticated, IsAdminUser]
-        return super().get_permissions()
-
 
 class Machine(APIView):
-    permission_classes = [IsAuthenticated]
-
     def get(self, request: Request, action: str, *args, **kwargs) -> Response:
         if action == "getMachine":
             data = {"host": "localhost", "port": 9000}
@@ -107,3 +75,23 @@ class Machine(APIView):
 
     def post(self, request: Request, *args, **kwargs) -> Response:
         pass
+
+
+class SandboxView(APIView):
+    def get(self, request: Request, action: str, *args, **kwargs) -> Response:
+        if action == "create":
+            data = request.data
+
+            response = create_sandbox(
+                name=data["name"],
+                tag=data["tag"],
+                config=data["config"],
+                images=data["images"],
+                files=data["files"],
+                type=data["type"],
+                projectName=data["projectName"],
+            )
+
+            # TODO as soon as the sandbox is created add sandbox to db
+
+            return get_api_response(response["message"], response["success"])

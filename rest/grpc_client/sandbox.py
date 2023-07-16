@@ -3,17 +3,17 @@ import traceback
 from typing import Generator, Iterable, List
 
 import grpc
-from definitions import environment_pb2, environment_pb2_grpc
+from definitions import sandbox_pb2, sandbox_pb2_grpc
 from grpc_client.channel import grpc_channel
 from utils.logger import log_error
 
 
-def create_environment(
+def create_sandbox(
     name: str, tag: str, config: dict, images, files, type: str, projectName: str
 ) -> Generator[str, None, None]:
     try:
-        stub = environment_pb2_grpc.environmentStub(grpc_channel)
-        request = environment_pb2.EnvironmentRequest(
+        stub = sandbox_pb2_grpc.SandboxStub(grpc_channel)
+        request = sandbox_pb2.SandboxRequest(
             name=name,
             tag=tag,
             config=config,
@@ -23,8 +23,8 @@ def create_environment(
             project_name=projectName,
         )
 
-        response_stream = stub.createEnvironment(request)
-        return response_stream
+        response = stub.create_sandbox(request)
+        return response
     except Exception:
         log_error(traceback.format_exc())
-    return None
+    return {"message": "", "success": False}

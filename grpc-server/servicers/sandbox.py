@@ -1,12 +1,12 @@
 import traceback
 
-import definitions.environment_pb2 as env_pb2
-import definitions.environment_pb2_grpc as env_pb2_grpc
+import definitions.sandbox_pb2 as sbx_pb2
+import definitions.sandbox_pb2_grpc as sbx_pb2_grpc
 import grpc
 from dockerclient import environment
 
 
-class Environment(env_pb2_grpc.environmentServicer):
+class Sandbox(sbx_pb2_grpc.SandboxServicer):
     def createEnvironment(self, request, context: grpc.aio.ServicerContext):
         try:
             created = environment.create_environment(
@@ -19,10 +19,10 @@ class Environment(env_pb2_grpc.environmentServicer):
                 images=request.images,
             )
             if not created:
-                return env_pb2.EnvCreationResponse(
+                return sbx_pb2.SbxCreationResponse(
                     message="Container could not be created", success=False
                 )
-            return env_pb2.EnvCreationResponse(
+            return sbx_pb2.sbxCreationResponse(
                 message="Container created", success=True
             )
         except Exception as e:
