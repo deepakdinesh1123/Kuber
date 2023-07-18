@@ -11,7 +11,7 @@
         "can_delete_comment": "true",
         "can_view": "true",
         "can_commit": "true",
-        "can_fork": "true"
+        "can_fork": "true",
       }
 - model: user.UserRole
   pk: 2
@@ -26,7 +26,7 @@
         "can_delete_comment": "true",
         "can_view": "true",
         "can_commit": "false",
-        "can_fork": "false"
+        "can_fork": "false",
       }
 - model: user.UserRole
   pk: 3
@@ -41,5 +41,5 @@
         "can_delete_comment": "true",
         "can_view": "true",
         "can_commit": "false",
-        "can_fork": "true"
+        "can_fork": "true",
       }

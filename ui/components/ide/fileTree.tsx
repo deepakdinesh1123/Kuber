@@ -26,13 +26,9 @@ function FileTree({ data, click }: FileTreeProps) {
     click(path, isDirectory);
   };
 
-  const addDirectory = () => {
+  const addDirectory = () => {};
 
-  }
-
-  const addFile = () => {
-
-  }
+  const addFile = () => {};
 
   const renderTree = (nodes: Node[]) => {
     return nodes.map((node) => {
@@ -63,11 +59,13 @@ function FileTree({ data, click }: FileTreeProps) {
     });
   };
 
-  return <>
-    <button onClick={addDirectory}>Folder</button>
-    <button onClick={addFile}>File</button>
-    <div className={styles.container}>{renderTree(data)}</div>;
-  </>
+  return (
+    <>
+      <button onClick={addDirectory}>Folder</button>
+      <button onClick={addFile}>File</button>
+      <div className={styles.container}>{renderTree(data)}</div>;
+    </>
+  );
 }
 
 export default FileTree;
