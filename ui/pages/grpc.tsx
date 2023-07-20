@@ -1,11 +1,14 @@
-import { useState } from 'react';
-var {ExecuteRequest, ExecutionResponse } = require("../grpc-client/execution/execute_pb");
+import { useState } from "react";
+var {
+  ExecuteRequest,
+  ExecutionResponse,
+} = require("../grpc-client/execution/execute_pb");
 var { ExecuteClient } = require("../grpc-client/execution/execute_grpc_web_pb");
 
 const client = new ExecuteClient("http://localhost:8080", null, null);
 
 const MyPage = () => {
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
 
   const handleClick = () => {
     const executeRequest = new ExecuteRequest();
@@ -19,19 +22,19 @@ const MyPage = () => {
       console.log(response.getSuccess());
     });
     var stream = client.executeCommandStream(executeRequest);
-      stream.on('data', function(response: any) {
-        console.log(response.getOutput().array);
-      });
-      // stream.on('status', function(status: any) {
-      //   console.log(status.code);
-      //   console.log(status.details);
-      //   console.log(status.metadata);
-      // });
-      // stream.on('end', function(end: any) {
+    stream.on("data", function (response: any) {
+      console.log(response.getOutput().array);
+    });
+    // stream.on('status', function(status: any) {
+    //   console.log(status.code);
+    //   console.log(status.details);
+    //   console.log(status.metadata);
+    // });
+    // stream.on('end', function(end: any) {
 
-      //   // stream end signal
-      // });
-      // to close the stream
+    //   // stream end signal
+    // });
+    // to close the stream
   };
 
   return (

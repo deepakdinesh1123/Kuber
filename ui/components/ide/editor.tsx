@@ -1,8 +1,8 @@
-import { useRef, useEffect, useState } from 'react';
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import 'monaco-editor/esm/vs/basic-languages/python/python.contribution';
-import 'monaco-editor/esm/vs/editor/editor.all.js';
-import { registerfileLanguage } from '../../utils/lang_support/lang_reg.js';
+import { useRef, useEffect, useState } from "react";
+import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
+import "monaco-editor/esm/vs/basic-languages/python/python.contribution";
+import "monaco-editor/esm/vs/editor/editor.all.js";
+import { registerfileLanguage } from "../../utils/lang_support/lang_reg.js";
 
 type MonacoEditorProps = {
   value: string;
@@ -12,10 +12,16 @@ type MonacoEditorProps = {
   height?: string;
 };
 
-const MonacoEditor = ({ value, onChange, language, width, height }: MonacoEditorProps) => {
+const MonacoEditor = ({
+  value,
+  onChange,
+  language,
+  width,
+  height,
+}: MonacoEditorProps) => {
   const [screenSize, setScreenSize] = useState({
     dynamicWidth: window.innerWidth,
-    dynamicHeight: window.innerHeight
+    dynamicHeight: window.innerHeight,
   });
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const modelRef = useRef<monaco.editor.ITextModel | null>(null);
@@ -25,21 +31,21 @@ const MonacoEditor = ({ value, onChange, language, width, height }: MonacoEditor
 
     // Initialize the Monaco editor
     editorRef.current = monaco.editor.create(
-      document.getElementById('monaco-editor')!,
+      document.getElementById("monaco-editor")!,
       {
-        theme: 'vs-dark',
-        language: 'rust',
-        value: value
-      }
+        theme: "vs-dark",
+        language: "rust",
+        value: value,
+      },
     );
-    monaco.editor.setTheme('vs-dark');
+    monaco.editor.setTheme("vs-dark");
 
     // Set the model
     modelRef.current = editorRef.current.getModel();
 
     // Enable code completion
     monaco.languages.register({
-      id: language
+      id: language,
     });
 
     // Load the language's contribution
@@ -53,9 +59,9 @@ const MonacoEditor = ({ value, onChange, language, width, height }: MonacoEditor
 
           // Provide completion items
           return {
-            suggestions: []
+            suggestions: [],
           };
-        }
+        },
       });
     });
 
@@ -67,22 +73,25 @@ const MonacoEditor = ({ value, onChange, language, width, height }: MonacoEditor
     const setDimension = () => {
       setScreenSize({
         dynamicWidth: window.innerWidth,
-        dynamicHeight: window.innerHeight
+        dynamicHeight: window.innerHeight,
       });
     };
-    window.addEventListener('resize', setDimension);
+    window.addEventListener("resize", setDimension);
 
     // Cleanup function
     return () => {
       editorRef.current!.dispose();
-      window.removeEventListener('resize', setDimension);
+      window.removeEventListener("resize", setDimension);
     };
   }, []);
 
   return (
     <div
       id="monaco-editor"
-      style={{ height: height || screenSize.dynamicHeight, width: width || screenSize.dynamicWidth }}
+      style={{
+        height: height || screenSize.dynamicHeight,
+        width: width || screenSize.dynamicWidth,
+      }}
     ></div>
   );
 };

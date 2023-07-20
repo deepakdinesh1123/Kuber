@@ -3,8 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, SyntheticEvent } from "react";
 
 export default function Register() {
-
-    const router = useRouter();
+  const router = useRouter();
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
@@ -15,46 +14,34 @@ export default function Register() {
     fetch(`${process.env.HOST}/account/api/register`, {
       method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        "username": username,
-        "email": email,
-        "password": password
-      })
-    }).then( res => {
-      if(res.status == 405) {
+        username: username,
+        email: email,
+        password: password,
+      }),
+    }).then((res) => {
+      if (res.status == 405) {
         console.log("User already exists");
-      }
-      else {
-        Cookies.set('logged_in', 'true');
-        router.push("http://localhost:3000/environment")
+      } else {
+        Cookies.set("logged_in", "true");
+        router.push("http://localhost:3000/environment");
       }
     });
   };
 
-  useEffect( () => {
+  useEffect(() => {});
 
-  });
-
-    return (
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="username">Username:</label>
-          <input
-            type="text"
-            id="username"
-          />
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-          />
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-          />
-          <button type="submit">Log In</button>
-        </form>
-      );
+  return (
+    <form onSubmit={handleSubmit}>
+      <label htmlFor="username">Username:</label>
+      <input type="text" id="username" />
+      <label htmlFor="email">Email:</label>
+      <input type="email" id="email" />
+      <label htmlFor="password">Password:</label>
+      <input type="password" id="password" />
+      <button type="submit">Log In</button>
+    </form>
+  );
 }

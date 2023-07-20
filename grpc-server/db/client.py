@@ -118,6 +118,3 @@ def retrieve_information(user: str, env_name: str = None):
             return json.dumps(user_info, indent=4)
     else:
         return json.dumps({"error": f"No information found for user {user}"}, indent=4)
-
-
-
