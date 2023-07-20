@@ -21,8 +21,8 @@ from servicers.sandbox import Sandbox
 
 async def serve() -> None:
     dotenv.load_dotenv()
-    interceptors = [JWTInterceptor()]
-    server = grpc.aio.server(interceptors=interceptors)
+    # interceptors = [JWTInterceptor()]
+    server = grpc.aio.server()
     add_ContainersServicer_to_server(Container(), server)
     add_ImagesServicer_to_server(Image(), server)
     add_FilesServicer_to_server(File(), server)

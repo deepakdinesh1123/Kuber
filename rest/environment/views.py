@@ -2,13 +2,14 @@ import json
 import traceback
 
 from django.shortcuts import render
+from google.protobuf.json_format import MessageToDict, MessageToJson
 from grpc_client.sandbox import create_sandbox
 from rest_framework import status
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from utils.logger import log_debug, log_error
+from utils.logger import log_debug, log_error, log_info
 from utils.response import get_api_response
 
 from .models import Environment, Sandbox
@@ -36,8 +37,15 @@ class DockerImage(APIView):
 
 
 class EnvironmentView(APIView):
-    def get(self, request: Request, action: str, *args, **kwargs) -> Response:
-        if action == "getEnvironments":
+    def get(self, request: Request, env_id=None, *args, **kwargs) -> Response:
+        if env_id:
+            try:
+                env = Environment.objects.get(env_id=env_id)
+                serializer = DockerEnvironmentSerializer(env, many=False)
+                return get_api_response(serializer.data, status=200, success=True)
+            except Exception as e:
+                return get_api_response(str(e), status=400, success=False)
+        else:
             try:
                 envs = Environment.objects.all()
                 serializer = DockerEnvironmentSerializer(envs, many=True)
@@ -78,20 +86,20 @@ class Machine(APIView):
 
 
 class SandboxView(APIView):
-    def get(self, request: Request, action: str, *args, **kwargs) -> Response:
-        if action == "create":
-            data = request.data
-
-            response = create_sandbox(
-                name=data["name"],
-                tag=data["tag"],
-                config=data["config"],
-                images=data["images"],
-                files=data["files"],
-                type=data["type"],
-                projectName=data["projectName"],
+    def post(self, request: Request, env_id=None, *args, **kwargs) -> Response:
+        env = Environment.objects.get(env_id=env_id)
+        response = create_sandbox(
+            name=env.env_name,
+            tag="1.0",
+            config=env.config,
+            images=env.dockerimage,
+            files=env.dockerfile,
+            env_type=env.type,
+            projectName="blank",
+        )
+        if response["success"]:
+            return get_api_response(MessageToJson(response), status=200, success=True)
+        else:
+            return get_api_response(
+                "Sandbox could not be created", status=400, success=False
             )
-
-            # TODO as soon as the sandbox is created add sandbox to db
-
-            return get_api_response(response["message"], response["success"])

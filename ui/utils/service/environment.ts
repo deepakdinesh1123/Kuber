@@ -12,3 +12,7 @@ export async function getMachine(request: AxiosRequest): Promise<AxiosResponse> 
 export async function handleGetEnvironment(request: AxiosRequest): Promise<AxiosResponse> {
     return await handleApiRequest(request);
 }
+
+export async function handleCreateSandbox(request: AxiosRequest): Promise<AxiosResponse> {
+    return await handleApiRequest(request);
+}

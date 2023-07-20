@@ -29,7 +29,7 @@ export async function handleApiRequest(request: AxiosRequest): Promise<AxiosResp
     try {
         const response = await axios.request({
           url: request.url,
-          baseURL: process.env.NEXT_PUBLIC_HOST,
+          baseURL: "http://localhost:8000",
           method: request.type,
           data: request.data,
         });

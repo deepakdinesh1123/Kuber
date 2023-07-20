@@ -17,8 +17,8 @@ SANDBOX_ACTIONS = (
 class Environment(models.Model):
     env_id = models.UUIDField(primary_key=True, default=uuid4, name="env_id")
     env_name = models.CharField(max_length=100, unique=True, name="env_name")
-    images = ArrayField(models.CharField(max_length=100, name="dockerimage"))
-    dockerfiles = ArrayField(models.CharField())
+    images = models.CharField(max_length=100, name="dockerimage")
+    dockerfile = models.CharField(max_length=1000, name="dockerfile")
     creator = models.ForeignKey(
         to=KuberUser, related_name="+", to_field="id", on_delete=models.CASCADE
     )
@@ -26,6 +26,22 @@ class Environment(models.Model):
     config = models.JSONField(name="config", default=dict)
     type = models.CharField(choices=ENVIRONMENT_CHOICES, max_length=10)
     private = models.BooleanField(default=False, editable=True)
+
+    def __str__(self) -> str:
+        return self.env_name
+
+
+class EnvironmentTest(models.Model):
+    environment = models.ForeignKey(
+        to=Environment,
+        related_name="+",
+        to_field="env_id",
+        on_delete=models.CASCADE,
+    )
+    github_url = models.URLField(max_length=100)
+    test_command = models.CharField(max_length=100)
+    directory = models.CharField(max_length=200, blank=True)
+    setup_command = models.CharField(max_length=100, blank=True)
 
 
 class Sandbox(models.Model):

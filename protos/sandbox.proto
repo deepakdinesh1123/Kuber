@@ -14,7 +14,7 @@ message SandboxRequest {
     string config = 3;
     repeated string images = 4;
     repeated string files = 5;
-    string type = 6;
+    string env_type = 6;
     string project_name = 7;
 }
 

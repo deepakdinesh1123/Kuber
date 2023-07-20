@@ -1,11 +1,23 @@
 import { useRouter } from "next/router";
 import Card  from "@/components/common/card";
-import { handleGetEnvironment } from "@/utils/service/environment";
+import { handleGetEnvironment, handleCreateSandbox  } from "@/utils/service/environment";
+import { UUID } from "crypto";
+import { JSON } from "@/types/common";
+
+type Environment = {
+    env_id: UUID,
+    env_name: string,
+    tag: string,
+    config: JSON,
+    images: Array<string>,
+    creator: string,
+    created_at: Date
+}
 
 export async function getServerSideProps() {
     const request = {
         type: "get",
-        url: "/environment/getEnvironments/"
+        url: "/environments/environment/"
     }
     const { success, data } = await  handleGetEnvironment(request);
     if (success) {
@@ -28,7 +40,18 @@ export default function Dashboard({ envs }) {
         router.push(`${process.env.NEXT_PUBLIC_HOST}/environments/create/`);
     }
 
-    const handleClick = () => {
+    const handleClick = async (env_id: UUID) => {
+        const request = {
+            type: "post",
+            url: `/environments/environment/${env_id}/sandbox/`,
+        }
+        const { success, data} = await handleCreateSandbox(request);
+        if(success) {
+            console.log("created");
+        }
+        else {
+            console.log("Could not be created");
+        }
 
     }
 
@@ -38,7 +61,7 @@ export default function Dashboard({ envs }) {
         </button>
         {
             envs.map((env, index) => (
-                <Card key = {index} title={env.env_name} description="lol" handleClick={handleClick}/>
+                <Card key = {env.env_id} title={env.env_name} description="lol" handleClick={() => handleClick(env.env_id)} />
             ))
         }
     </>

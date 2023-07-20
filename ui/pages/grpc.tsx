@@ -1,37 +1,33 @@
 import { useState } from 'react';
-var {ExecuteRequest, ExecutionResponse } = require("../grpc-client/execution/execute_pb");
-var { ExecuteClient } = require("../grpc-client/execution/execute_grpc_web_pb");
+import { StyleRegistry } from 'styled-jsx';
+var {ExecuteRequest, ExecutionResponse } = require("../definitions/execution/execute_pb");
+var { ExecuteClient } = require("../definitions/execution/execute_grpc_web_pb");
 
-const client = new ExecuteClient("http://localhost:8080", null, null);
+
+const client = new ExecuteClient("http://localhost:8080");
 
 const MyPage = () => {
   const [text, setText] = useState('');
 
   const handleClick = () => {
     const executeRequest = new ExecuteRequest();
-    executeRequest.setContainerName("Something");
-    executeRequest.setCommand("ls");
-    console.log(executeRequest);
-    client.executeCommand(executeRequest, null, (err: any, response: any) => {
-      if (err) return console.log(err);
-      const error = response.getError();
-      const msg = response.getMsg();
-      console.log(response.getSuccess());
-    });
-    var stream = client.executeCommandStream(executeRequest);
-      stream.on('data', function(response: any) {
-        console.log(response.getOutput().array);
-      });
-      // stream.on('status', function(status: any) {
-      //   console.log(status.code);
-      //   console.log(status.details);
-      //   console.log(status.metadata);
-      // });
-      // stream.on('end', function(end: any) {
+    executeRequest.setContainerName("nerdy-fuchsia-spider");
+    executeRequest.setCommand("sh infy.sh");
+    executeRequest.setDir("/");
+    const stream = client.execute_command(executeRequest, {});
 
-      //   // stream end signal
-      // });
-      // to close the stream
+    stream.on('data', (response) => {
+      const message = response.getMessage();
+      console.log('Received message:', message);
+    });
+
+    stream.on('end', () => {
+      console.log('Stream ended');
+    });
+
+    stream.on('error', (error) => {
+      console.error('Error:', error.message);
+    });
   };
 
   return (

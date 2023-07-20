@@ -23,5 +23,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     re_path("account/", include("user.urls")),
     re_path("languages/", include("language_support.urls")),
-    re_path("environment/", include("environment.urls")),
+    re_path("environments/", include("environment.urls")),
 ]

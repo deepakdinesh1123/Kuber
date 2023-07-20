@@ -8,7 +8,7 @@
 // versions:
 // 	protoc-gen-grpc-web v1.4.2
 // 	protoc              v3.12.4
-// source: grpc-server/protos/execution/execute.proto
+// source: execute.proto
 
 
 /* eslint-disable */
@@ -80,69 +80,8 @@ proto.execution.ExecutePromiseClient =
  *   !proto.execution.ExecuteRequest,
  *   !proto.execution.ExecutionResponse>}
  */
-const methodDescriptor_Execute_executeCommand = new grpc.web.MethodDescriptor(
-  '/execution.Execute/executeCommand',
-  grpc.web.MethodType.UNARY,
-  proto.execution.ExecuteRequest,
-  proto.execution.ExecutionResponse,
-  /**
-   * @param {!proto.execution.ExecuteRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.execution.ExecutionResponse.deserializeBinary
-);
-
-
-/**
- * @param {!proto.execution.ExecuteRequest} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.execution.ExecutionResponse)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.execution.ExecutionResponse>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.execution.ExecuteClient.prototype.executeCommand =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/execution.Execute/executeCommand',
-      request,
-      metadata || {},
-      methodDescriptor_Execute_executeCommand,
-      callback);
-};
-
-
-/**
- * @param {!proto.execution.ExecuteRequest} request The
- *     request proto
- * @param {?Object<string, string>=} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.execution.ExecutionResponse>}
- *     Promise that resolves to the response
- */
-proto.execution.ExecutePromiseClient.prototype.executeCommand =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/execution.Execute/executeCommand',
-      request,
-      metadata || {},
-      methodDescriptor_Execute_executeCommand);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
- *   !proto.execution.ExecuteRequest,
- *   !proto.execution.ExecutionResponse>}
- */
-const methodDescriptor_Execute_executeCommandStream = new grpc.web.MethodDescriptor(
-  '/execution.Execute/executeCommandStream',
+const methodDescriptor_Execute_execute_command = new grpc.web.MethodDescriptor(
+  '/execution.Execute/execute_command',
   grpc.web.MethodType.SERVER_STREAMING,
   proto.execution.ExecuteRequest,
   proto.execution.ExecutionResponse,
@@ -164,13 +103,13 @@ const methodDescriptor_Execute_executeCommandStream = new grpc.web.MethodDescrip
  * @return {!grpc.web.ClientReadableStream<!proto.execution.ExecutionResponse>}
  *     The XHR Node Readable Stream
  */
-proto.execution.ExecuteClient.prototype.executeCommandStream =
+proto.execution.ExecuteClient.prototype.execute_command =
     function(request, metadata) {
   return this.client_.serverStreaming(this.hostname_ +
-      '/execution.Execute/executeCommandStream',
+      '/execution.Execute/execute_command',
       request,
       metadata || {},
-      methodDescriptor_Execute_executeCommandStream);
+      methodDescriptor_Execute_execute_command);
 };
 
 
@@ -181,13 +120,13 @@ proto.execution.ExecuteClient.prototype.executeCommandStream =
  * @return {!grpc.web.ClientReadableStream<!proto.execution.ExecutionResponse>}
  *     The XHR Node Readable Stream
  */
-proto.execution.ExecutePromiseClient.prototype.executeCommandStream =
+proto.execution.ExecutePromiseClient.prototype.execute_command =
     function(request, metadata) {
   return this.client_.serverStreaming(this.hostname_ +
-      '/execution.Execute/executeCommandStream',
+      '/execution.Execute/execute_command',
       request,
       metadata || {},
-      methodDescriptor_Execute_executeCommandStream);
+      methodDescriptor_Execute_execute_command);
 };
 
 

@@ -3,17 +3,17 @@ import traceback
 import definitions.sandbox_pb2 as sbx_pb2
 import definitions.sandbox_pb2_grpc as sbx_pb2_grpc
 import grpc
-from dockerclient import environment
+from dockerclient import sandbox
 
 
 class Sandbox(sbx_pb2_grpc.SandboxServicer):
-    def createEnvironment(self, request, context: grpc.aio.ServicerContext):
+    def create_sandbox(self, request, context: grpc.aio.ServicerContext):
         try:
-            created = environment.create_environment(
+            created, containers = sandbox.create_sandbox(
                 name=request.name,
                 config=request.config,
                 files=request.files,
-                env_type=request.type,
+                env_type=request.env_type,
                 project_name=request.project_name,
                 tag=request.tag,
                 images=request.images,
@@ -22,8 +22,8 @@ class Sandbox(sbx_pb2_grpc.SandboxServicer):
                 return sbx_pb2.SbxCreationResponse(
                     message="Container could not be created", success=False
                 )
-            return sbx_pb2.sbxCreationResponse(
-                message="Container created", success=True
+            return sbx_pb2.SbxCreationResponse(
+                message="Container created", success=True, containers=containers
             )
         except Exception as e:
             traceback.print_exc()
