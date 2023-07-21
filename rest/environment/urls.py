@@ -1,5 +1,5 @@
 from django.urls import re_path
-from environment.views import EnvironmentView, SandboxView
+from environment.views import EnvironmentView, Machine, SandboxView
 
 urlpatterns = [
     re_path(
@@ -17,4 +17,5 @@ urlpatterns = [
         EnvironmentView.as_view(),
         name="environment-api",
     ),
+    re_path("machine/", Machine.as_view(), name="machine"),
 ]

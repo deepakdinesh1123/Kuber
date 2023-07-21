@@ -33,7 +33,16 @@ export default function CreateEnvironment() {
     const handleTextAreaKeyDown = (event: SyntheticEvent) => {
         if(event.keyCode === 9) {
             event.preventDefault();
-            // TODO handle tab press properly
+            const { selectionStart, selectionEnd, value } = event.target;
+            const newValue =
+        value.substring(0, selectionStart) +
+        '    ' + // Four spaces
+        value.substring(selectionEnd);
+
+        // Update the textarea value and set the new cursor position
+        event.target.value = newValue;
+        setConfig(newValue);
+        event.target.setSelectionRange(selectionStart + 4, selectionStart + 4);
         }
     }
 
@@ -83,22 +92,8 @@ export default function CreateEnvironment() {
     </form>
         );
     }
-
-    const DockerConfig = () => {
-         return (
-            <>
-                <button type='button' onClick={handleSubmit}> Submit</button>
-                <div style={{"display": "flex"}}>
-                <MonacoEditor value={"# Enter your dockerfile "} onChange={handleCodeChange} language='Docker' width='80%'/>
-                <textarea
-                    style={{ backgroundColor: "black", caretColor: "white", width: "20%", height: "auto", color: "white"}}
-                    onKeyDown={handleTextAreaKeyDown}
-                    value={config}
-                    onChange={handleConfigChange}
-                >
-                </textarea>
-            </div>
-        </>);
+    const handleCodeChange = (content: string) => {
+      setFileContent(content);
     }
 
     const handleSubmit = (event) => {
@@ -115,10 +110,6 @@ export default function CreateEnvironment() {
         }
         const resp = handleCreateEnvironment(request);
         console.log(resp);
-    }
-
-    const handleCodeChange = (content: string) => {
-        setFileContent(content);
     }
 
     const [windowSize, setWindowSize] = useState({
@@ -141,7 +132,42 @@ export default function CreateEnvironment() {
 
     return (
     <>
-        { configureEnv ? <EnvDetailsForm/> : <DockerConfig/> }
+      {configureEnv ? (
+  <EnvDetailsForm />
+) : (
+  <div>
+    <div style={{ display: 'flex'}}>
+      <button type='button' onClick={handleSubmit}>
+        Submit
+      </button>
+      <button type='button' onClick={() => {setConfigureEnv(true)}}>
+        Configgure Environment
+      </button>
+    </div>
+
+    <div style={{ display: "flex" }}>
+      <MonacoEditor
+        value={"# Enter your dockerfile "}
+        onChange={handleCodeChange}
+        language='Docker'
+        width='80%'
+      />
+      <textarea
+            style={{
+              backgroundColor: "black",
+              caretColor: "white",
+              width: "20%",
+              height: "auto",
+              color: "white",
+            }}
+            onKeyDown={handleTextAreaKeyDown}
+            value={config}
+            onChange={handleConfigChange}
+          ></textarea>
+        </div>
+      </div>
+    )}
+
     </>
     )
 }

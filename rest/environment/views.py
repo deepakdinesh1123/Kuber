@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from user.authentication import JWTAuthentication
 from utils.logger import log_debug, log_error, log_info
 from utils.response import get_api_response
 
@@ -37,6 +38,8 @@ class DockerImage(APIView):
 
 
 class EnvironmentView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def get(self, request: Request, env_id=None, *args, **kwargs) -> Response:
         if env_id:
             try:
@@ -76,10 +79,13 @@ class EnvironmentView(APIView):
 
 
 class Machine(APIView):
-    def get(self, request: Request, action: str, *args, **kwargs) -> Response:
-        if action == "getMachine":
-            data = {"host": "localhost", "port": 9000}
-            return get_api_response(data, 200, True)
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request: Request, *args, **kwargs) -> Response:
+        user = request.user
+        if user:
+            return get_api_response(user.email, status=200, success=True)
+        return get_api_response("Failed", status=400, success=False)
 
     def post(self, request: Request, *args, **kwargs) -> Response:
         pass
