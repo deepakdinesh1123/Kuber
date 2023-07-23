@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie';
+import { handleGithubAuthRequest } from '@/utils/service/ui';
+import { AxiosResponse } from 'axios';
 
 const RedirectPage = () => {
   const router = useRouter();
@@ -25,19 +27,7 @@ const RedirectPage = () => {
 
   const sendPostRequest = async (code: string) => {
     try {
-      const response = await fetch('http://localhost:8000/users/auth/github', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code }),
-      });
-
-      if (response.ok) {
-        setRequestStatus('POST request sent successfully');
-      } else {
-        setRequestStatus('Failed to send POST request');
-      }
+      const response: AxiosResponse = await handleGithubAuthRequest(code);
     } catch (error) {
       console.error('Error:', error);
       setRequestStatus('Error: ' + error);

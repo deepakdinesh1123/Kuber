@@ -1,5 +1,3 @@
-import json
-import logging
 import os
 
 import hvac
@@ -9,20 +7,16 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from utils.response import get_api_response
 
 from .models import KuberUser
 
 
 class RegisterView(APIView):
-    def __init__(self):
-        self.vault_client = hvac.Client(
-            url="http://localhost:8200"
-        )  # Adjust Vault URL if necessary
-        self.vault_token = os.getenv(
-            "VAULT_TOKEN"
-        )  # Retrieve Vault token from environment variables
-
     def post(self, request):
+        vault_client = hvac.Client(url=os.getenv("VAULT_URL"))
+        vault_token = os.getenv("VAULT_TOKEN")
+
         code = request.data.get("code")
         if not code:
             return HttpResponseBadRequest("Authorization code is missing")
@@ -61,18 +55,20 @@ class RegisterView(APIView):
         user_uuid = str(user.id)
 
         # Send user UUID and access token to HashiCorp Vault
-        self.send_to_hashicorp_vault(user_uuid, access_token, username)
-
-        response = Response(
-            {"message": "User registered successfully"}, status=status.HTTP_201_CREATED
+        self.send_to_hashicorp_vault(
+            vault_client, vault_token, user_uuid, access_token, username
         )
+
+        response_data = {"message": "User registered successfully"}
+        response_status = status.HTTP_201_CREATED
+        response = get_api_response(response_data, status=response_status, success=True)
         response.set_cookie("access_token", jwt_token, max_age=3600)
 
         return response
 
     def exchange_code_for_token(self, code):
         response = requests.post(
-            "https://github.com/login/oauth/access_token",
+            os.getenv("GIT_OAUTH_URL"),
             params={
                 "client_id": os.getenv("GITHUB_CLIENT_ID"),
                 "client_secret": os.getenv("GITHUB_CLIENT_SECRET"),
@@ -89,21 +85,18 @@ class RegisterView(APIView):
             "Authorization": f"Bearer {access_token}",
             "Accept": "application/vnd.github+json",
         }
-        response = requests.get("https://api.github.com/user", headers=headers)
-        user_data = response.json()
-        return user_data
+        response = requests.get(os.getenv("GIT_API_URL"), headers=headers)
+        if response.status_code == 200:
+            user_data = response.json()
+            return user_data  # Return the raw user data
+        return None
 
-    def send_to_hashicorp_vault(self, user_uuid, access_token, username):
-        logging.basicConfig(
-            filename="app.log",
-            level=logging.DEBUG,
-            format="%(asctime)s - %(levelname)s - %(message)s",
-        )
-        logging.debug(self.vault_client.is_authenticated())
-        if not self.vault_client.is_authenticated():
-            self.vault_client.auth_token(self.vault_token)
+    def send_to_hashicorp_vault(
+        self, vault_client, vault_token, user_uuid, access_token, username
+    ):
+        if not vault_client.is_authenticated():
+            vault_client.auth_token(vault_token)
 
-        create_response = self.vault_client.secrets.kv.v2.create_or_update_secret(
+        vault_client.secrets.kv.v2.create_or_update_secret(
             path=username, secret={user_uuid: access_token}
         )
-        logging.debug(json.dumps(create_response, indent=4, sort_keys=True))

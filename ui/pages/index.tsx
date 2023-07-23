@@ -1,9 +1,12 @@
 import React, { useEffect } from 'react';
+import dotenv from 'dotenv';
+
 
 const SignupWithGitHub: React.FC = () => {
   const handleSignup = () => {
-    const clientId = 'c15c2a51e900aee7287c';
-    const redirectUri = 'http://localhost:3000/redirect';
+    dotenv.config();
+    const clientId = process.env.GITHUB_CLIENT_ID;
+    const redirectUri = process.env.GIT_REDIRECT_URL;
 
     // Redirect the user to GitHub's authorization endpoint
     window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}`;
