@@ -1,10 +1,8 @@
 import React, { useEffect } from 'react';
-import dotenv from 'dotenv';
 
 
 const SignupWithGitHub: React.FC = () => {
   const handleSignup = () => {
-    dotenv.config();
     const clientId = process.env.GITHUB_CLIENT_ID;
     const redirectUri = process.env.GIT_REDIRECT_URL;
 

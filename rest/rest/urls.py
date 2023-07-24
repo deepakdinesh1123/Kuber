@@ -21,7 +21,6 @@ from user.views import RegisterView
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("languages/", include("language_support.urls")),
-    path("environment/", include("environment.urls")),
-    path("redirect", RegisterView.as_view(), name="github-auth"),
+    path("environments/", include("environment.urls")),
     path("users/", include("user.urls")),
 ]
