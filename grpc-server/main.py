@@ -8,6 +8,7 @@ from definitions.files_pb2_grpc import add_FilesServicer_to_server
 from definitions.image_pb2_grpc import add_ImagesServicer_to_server
 from definitions.logs_pb2_grpc import add_LogsServicer_to_server
 from definitions.retrieve_pb2_grpc import add_DataServiceServicer_to_server
+from definitions.uptime_pb2_grpc import add_ContainerUptimeServicer_to_server
 from servicers.container import Container
 from servicers.environment import Environment
 from servicers.execute import Execute
@@ -15,6 +16,7 @@ from servicers.files import File
 from servicers.image import Image
 from servicers.logs import Logs
 from servicers.retrieve import DataServiceServicer
+from servicers.uptime import UptimeServicer
 
 
 async def serve() -> None:
@@ -26,6 +28,7 @@ async def serve() -> None:
     add_DataServiceServicer_to_server(DataServiceServicer(), server)
     add_ExecuteServicer_to_server(Execute(), server)
     add_LogsServicer_to_server(Logs(), server)
+    add_ContainerUptimeServicer_to_server(UptimeServicer(), server)
     listener_addr = "[::]:9000"
     server.add_insecure_port(listener_addr)
     try:
