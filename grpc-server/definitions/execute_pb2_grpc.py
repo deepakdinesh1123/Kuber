@@ -14,8 +14,8 @@ class ExecuteStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.executeCommand = channel.unary_stream(
-                '/execution.Execute/executeCommand',
+        self.execute_command = channel.unary_stream(
+                '/execution.Execute/execute_command',
                 request_serializer=execute__pb2.ExecuteRequest.SerializeToString,
                 response_deserializer=execute__pb2.ExecutionResponse.FromString,
                 )
@@ -24,7 +24,7 @@ class ExecuteStub(object):
 class ExecuteServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def executeCommand(self, request, context):
+    def execute_command(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -33,8 +33,8 @@ class ExecuteServicer(object):
 
 def add_ExecuteServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'executeCommand': grpc.unary_stream_rpc_method_handler(
-                    servicer.executeCommand,
+            'execute_command': grpc.unary_stream_rpc_method_handler(
+                    servicer.execute_command,
                     request_deserializer=execute__pb2.ExecuteRequest.FromString,
                     response_serializer=execute__pb2.ExecutionResponse.SerializeToString,
             ),
@@ -49,7 +49,7 @@ class Execute(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def executeCommand(request,
+    def execute_command(request,
             target,
             options=(),
             channel_credentials=None,
@@ -59,7 +59,7 @@ class Execute(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/execution.Execute/executeCommand',
+        return grpc.experimental.unary_stream(request, target, '/execution.Execute/execute_command',
             execute__pb2.ExecuteRequest.SerializeToString,
             execute__pb2.ExecutionResponse.FromString,
             options, channel_credentials,
