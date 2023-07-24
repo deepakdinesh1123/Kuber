@@ -238,6 +238,22 @@ protobuf = ">=4.21.6,<5.0dev"
 setuptools = "*"
 
 [[package]]
+name = "hvac"
+version = "1.1.1"
+description = "HashiCorp Vault API client"
+category = "main"
+optional = false
+python-versions = ">=3.6.2,<4.0.0"
+files = [
+    {file = "hvac-1.1.1-py3-none-any.whl", hash = "sha256:466e883665b4082933106b292649f9fba3bc0709a1ec1729e9e35b29477164b3"},
+    {file = "hvac-1.1.1.tar.gz", hash = "sha256:f9dbcc46b98b250c785eb1050aa11ee34a0c8b6616b75218cf1346a9817992f9"},
+]
+
+[package.dependencies]
+pyhcl = ">=0.4.4,<0.5.0"
+requests = ">=2.27.1,<3.0.0"
+
+[[package]]
 name = "idna"
 version = "3.4"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -294,6 +310,35 @@ files = [
     {file = "protobuf-4.22.1-py3-none-any.whl", hash = "sha256:3e19dcf4adbf608924d3486ece469dd4f4f2cf7d2649900f0efcd1a84e8fd3ba"},
     {file = "protobuf-4.22.1.tar.gz", hash = "sha256:dce7a55d501c31ecf688adb2f6c3f763cf11bc0be815d1946a84d74772ab07a7"},
 ]
+
+[[package]]
+name = "pyhcl"
+version = "0.4.4"
+description = "HCL configuration parser for python"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pyhcl-0.4.4.tar.gz", hash = "sha256:2d9b9dcdf1023d812bfed561ba72c99104c5b3f52e558d595130a44ce081b003"},
+]
+
+[[package]]
+name = "pyjwt"
+version = "2.8.0"
+description = "JSON Web Token implementation in Python"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "PyJWT-2.8.0-py3-none-any.whl", hash = "sha256:59127c392cc44c2da5bb3192169a91f429924e17aff6534d70fdc02ab3e04320"},
+    {file = "PyJWT-2.8.0.tar.gz", hash = "sha256:57e28d156e3d5c10088e0c68abb90bfac3df82b40a71bd0daa20c65ccd5c23de"},
+]
+
+[package.extras]
+crypto = ["cryptography (>=3.4.0)"]
+dev = ["coverage[toml] (==5.0.4)", "cryptography (>=3.4.0)", "pre-commit", "pytest (>=6.0.0,<7.0.0)", "sphinx (>=4.5.0,<5.0.0)", "sphinx-rtd-theme", "zope.interface"]
+docs = ["sphinx (>=4.5.0,<5.0.0)", "sphinx-rtd-theme", "zope.interface"]
+tests = ["coverage[toml] (==5.0.4)", "pytest (>=6.0.0,<7.0.0)"]
 
 [[package]]
 name = "pywin32"
@@ -447,4 +492,4 @@ test = ["websockets"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "bb3bcdf5af3fa8517bcb93b20273d90275514cc8f137f57318d1e26d188f493f"
+content-hash = "94151859d64d80cdad390645d934d493de72fde3d5cd1c9fe190aac7a5109436"
