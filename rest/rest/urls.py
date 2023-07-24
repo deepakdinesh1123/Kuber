@@ -16,10 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path, re_path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from user.views import RegisterView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("user/", include("")),
     path("languages/", include("language_support.urls")),
     path("environment/", include("environment.urls")),
+    path("redirect", RegisterView.as_view(), name="github-auth"),
+    path("users/", include("user.urls")),
 ]
