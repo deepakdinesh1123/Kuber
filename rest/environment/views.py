@@ -2,13 +2,15 @@ import json
 import traceback
 
 from django.shortcuts import render
-from grpc_client.environment import create_environment
+from google.protobuf.json_format import MessageToDict, MessageToJson
+from grpc_client.sandbox import create_sandbox
 from rest_framework import status
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from utils.logger import log_debug, log_error
+from user.authentication import JWTAuthentication
+from utils.logger import log_debug, log_error, log_info
 from utils.response import get_api_response
 
 from .models import Environment, Sandbox
@@ -36,14 +38,19 @@ class DockerImage(APIView):
 
 
 class EnvironmentView(APIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
-    def get(self, request: Request, action: str, *args, **kwargs) -> Response:
-        user = request.user
-
-        if action == "getEnvironments":
+    def get(self, request: Request, env_id=None, *args, **kwargs) -> Response:
+        if env_id:
             try:
-                envs = Environment.objects.filter(creator=user)
+                env = Environment.objects.get(env_id=env_id)
+                serializer = DockerEnvironmentSerializer(env, many=False)
+                return get_api_response(serializer.data, status=200, success=True)
+            except Exception as e:
+                return get_api_response(str(e), status=400, success=False)
+        else:
+            try:
+                envs = Environment.objects.all()
                 serializer = DockerEnvironmentSerializer(envs, many=True)
             except Exception as e:
                 return get_api_response(str(e), status=400, success=False)
@@ -70,40 +77,35 @@ class EnvironmentView(APIView):
                 log_error(traceback.format_exc())
                 return get_api_response(str(e), status=400, success=False)
 
-        if action == "start":
-            env_id = data["env_id"]
-            try:
-                env = Environment.objects.get(env_id=env_id)
-            except Exception:
-                return get_api_response(
-                    "Environment does not exist", status=400, success=False
-                )
-            resp = create_environment(
-                name=env.env_name,
-                tag="1.0",
-                config=env.config,
-                images=env.images,
-                type=env.type,
-                files=env,
-                projectName=data["project_name"],
-            )
-
-            if resp is None:
-                raise
-
-    def get_permissions(self):
-        if self.request.method == "DELETE":
-            self.permission_classes = [IsAuthenticated, IsAdminUser]
-        return super().get_permissions()
-
 
 class Machine(APIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
-    def get(self, request: Request, action: str, *args, **kwargs) -> Response:
-        if action == "getMachine":
-            data = {"host": "localhost", "port": 9000}
-            return get_api_response(data, 200, True)
+    def get(self, request: Request, *args, **kwargs) -> Response:
+        user = request.user
+        if user:
+            return get_api_response(user.email, status=200, success=True)
+        return get_api_response("Failed", status=400, success=False)
 
     def post(self, request: Request, *args, **kwargs) -> Response:
         pass
+
+
+class SandboxView(APIView):
+    def post(self, request: Request, env_id=None, *args, **kwargs) -> Response:
+        env = Environment.objects.get(env_id=env_id)
+        response = create_sandbox(
+            name=env.env_name,
+            tag="1.0",
+            config=env.config,
+            images=env.dockerimage,
+            files=env.dockerfile,
+            env_type=env.type,
+            projectName="blank",
+        )
+        if response["success"]:
+            return get_api_response(MessageToJson(response), status=200, success=True)
+        else:
+            return get_api_response(
+                "Sandbox could not be created", status=400, success=False
+            )

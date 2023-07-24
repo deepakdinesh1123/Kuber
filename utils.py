@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 
 
 def add_import_statement(file_path):
@@ -27,3 +28,20 @@ def process_directory(directory_path):
 # Provide the directory path here
 directory_path = "/path/to/directory"
 process_directory(directory_path)
+
+
+def remove_migrations():
+    folders = os.listdir("./rest")
+    for folder in folders:
+        if os.path.exists(f"./rest/{folder}/migrations"):
+            for obj in os.listdir(f"./rest/{folder}/migrations"):
+                if (
+                    os.path.isfile(f"./rest/{folder}/migrations/{obj}")
+                    and obj != "__init__.py"
+                ):
+                    os.remove(f"./rest/{folder}/migrations/{obj}")
+
+
+if __name__ == "__main__":
+    # action = sys.argv[1]
+    remove_migrations()

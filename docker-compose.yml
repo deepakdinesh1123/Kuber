@@ -10,7 +10,7 @@ services:
 
   envoy:
     image: envoyproxy/envoy:v1.25.3
-    command: ["envoy", "-c", "/etc/envoy.yaml", "--service-cluster", "envoy"]
+    command: ["envoy", "-c", "/etc/envoy.yaml"]
     volumes:
       - ./envoy.yaml:/etc/envoy.yaml
     network_mode: host

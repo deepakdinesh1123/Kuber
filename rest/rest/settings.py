@@ -143,15 +143,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "user.KuberUser"
 
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
-}
-
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=20),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+REST_FRAMEWORK = {
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning"
 }
+
+JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")

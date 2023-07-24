@@ -3,7 +3,7 @@ syntax = "proto3";
 package execution;
 
 service Execute {
-    rpc executeCommand(ExecuteRequest) returns (stream ExecutionResponse) {}
+    rpc execute_command(ExecuteRequest) returns (stream ExecutionResponse) {}
 }
 
 message ExecuteRequest {

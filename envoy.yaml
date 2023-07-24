@@ -40,7 +40,7 @@ static_resources:
                     typed_config:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
   clusters:
-    - name: echo_service
+    - name: grpc_server
       connect_timeout: 0.25s
       type: logical_dns
       http2_protocol_options: {}
@@ -53,4 +53,4 @@ static_resources:
                   address:
                     socket_address:
                       address: 127.0.0.1
-                      port_value: 9090
+                      port_value: 9000

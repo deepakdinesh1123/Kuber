@@ -1,24 +1,102 @@
-from django.shortcuts import render
+import os
+
+import hvac
+import jwt
+import requests
+from django.http import HttpResponse, HttpResponseBadRequest
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from user.exceptions import UserAlreadyExists
-from user.serializers import UserSerializer
+from utils.response import get_api_response
 
-# Create your views here.
+from .models import KuberUser
 
 
 class RegisterView(APIView):
-    def post(self, request) -> Response:
-        serializer = UserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        try:
-            serializer.save()
-        except UserAlreadyExists:
-            return Response(
-                "User with provided email already exists",
-                status=status.HTTP_405_METHOD_NOT_ALLOWED,
-            )
-        resp = Response("Registration successful", status=status.HTTP_201_CREATED)
-        resp.set_cookie("logged_in", "True")
-        return resp
+    def post(self, request):
+        vault_client = hvac.Client(url=os.getenv("VAULT_URL"))
+        vault_token = os.getenv("VAULT_TOKEN")
+
+        code = request.data.get("code")
+        if not code:
+            return HttpResponseBadRequest("Authorization code is missing")
+
+        # Exchange the authorization code for an access token
+        access_token = self.exchange_code_for_token(code)
+
+        if not access_token:
+            return HttpResponseBadRequest("Failed to obtain access token")
+
+        # Get user details using the access token
+        user_data = self.get_user_data(access_token)
+
+        if not user_data:
+            return HttpResponseBadRequest("Failed to retrieve user data")
+
+        # Extract username and email from user data
+        username = user_data.get("login")
+        email = user_data.get("email")
+
+        # Create a new KuberUser instance
+        user = KuberUser(
+            username=username,
+            email=email,
+            github_username=username,
+        )
+        user.set_unusable_password()
+        user.save()
+
+        jwt_payload = {"access_token": access_token}
+        jwt_token = jwt.encode(
+            jwt_payload, os.getenv("JWT_SECRET_KEY"), algorithm="HS256"
+        )
+
+        # Extract the UUID of the newly registered user
+        user_uuid = str(user.id)
+
+        # Send user UUID and access token to HashiCorp Vault
+        self.send_to_hashicorp_vault(
+            vault_client, vault_token, user_uuid, access_token, username
+        )
+
+        response_data = {"message": "User registered successfully"}
+        response_status = status.HTTP_201_CREATED
+        response = get_api_response(response_data, status=response_status, success=True)
+        response.set_cookie("access_token", jwt_token, max_age=3600)
+
+        return response
+
+    def exchange_code_for_token(self, code):
+        response = requests.post(
+            os.getenv("GIT_OAUTH_URL"),
+            params={
+                "client_id": os.getenv("GITHUB_CLIENT_ID"),
+                "client_secret": os.getenv("GITHUB_CLIENT_SECRET"),
+                "code": code,
+            },
+            headers={"Accept": "application/json"},
+        )
+        data = response.json()
+        access_token = data.get("access_token")
+        return access_token
+
+    def get_user_data(self, access_token):
+        headers = {
+            "Authorization": f"Bearer {access_token}",
+            "Accept": "application/vnd.github+json",
+        }
+        response = requests.get(os.getenv("GIT_API_URL"), headers=headers)
+        if response.status_code == 200:
+            user_data = response.json()
+            return user_data  # Return the raw user data
+        return None
+
+    def send_to_hashicorp_vault(
+        self, vault_client, vault_token, user_uuid, access_token, username
+    ):
+        if not vault_client.is_authenticated():
+            vault_client.auth_token(vault_token)
+
+        vault_client.secrets.kv.v2.create_or_update_secret(
+            path=username, secret={user_uuid: access_token}
+        )

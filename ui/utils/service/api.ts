@@ -6,7 +6,7 @@ export type JSON = {
 };
 
 export interface AxiosRequest {
-  data: JSON;
+  data?: JSON;
   type: string;
   url: string;
   headers?: JSON;
@@ -17,28 +17,36 @@ export interface AxiosResponse {
   success: boolean;
 }
 
-export function handleApiRequest(request: AxiosRequest): AxiosResponse {
-  if (request.headers != undefined) {
-    request.headers = {
-      Authorizaion: `Bearer ${Cookies.get("access_token")}`,
-      ...request.headers,
-    };
-  }
-  axios
-    .request({
+export interface AxiosResponse {
+  data: JSON;
+  success: boolean;
+}
+
+export async function handleApiRequest(
+  request: AxiosRequest,
+): Promise<AxiosResponse> {
+  // if (request.headers != undefined) {
+  //     request.headers = {
+  //         "Authorizaion": `Bearer ${Cookies.get("access_token")}`,
+  //         ...request.headers
+  //     }
+  // }
+  try {
+    const response = await axios.request({
       url: request.url,
-      baseURL: process.env.NEXT_PUBLIC_HOST,
+      baseURL: "http://localhost:8000",
       method: request.type,
       data: request.data,
-    })
-    .then((res) => {
-      return res.data["response"], res.data["success"];
-    })
-    .catch((e) => {
-      console.log(e);
     });
-  return {
-    data: {},
-    success: false,
-  };
+    return {
+      data: response.data.response,
+      success: response.data.success,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      data: {},
+      success: false,
+    };
+  }
 }
