@@ -11,7 +11,7 @@ class JWTAuthentication(BaseAuthentication):
     def authenticate(self, request):
         auth_header = request.headers.get("Authorization")
         if not auth_header:
-            return None
+            raise AuthenticationFailed("Token not provided")
 
         try:
             token = auth_header.split()[

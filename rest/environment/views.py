@@ -5,7 +5,7 @@ from django.shortcuts import render
 from google.protobuf.json_format import MessageToDict, MessageToJson
 from grpc_client.sandbox import create_sandbox
 from rest_framework import status
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -38,8 +38,6 @@ class DockerImage(APIView):
 
 
 class EnvironmentView(APIView):
-    authentication_classes = [JWTAuthentication]
-
     def get(self, request: Request, env_id=None, *args, **kwargs) -> Response:
         if env_id:
             try:
@@ -59,7 +57,6 @@ class EnvironmentView(APIView):
     def post(self, request: Request, action: str, *args, **kwargs) -> Response:
         user = request.user
         data = request.data
-        log_debug(data)
         if action == "create":
             try:
                 private = data.get("private", False)
@@ -76,6 +73,11 @@ class EnvironmentView(APIView):
             except Exception as e:
                 log_error(traceback.format_exc())
                 return get_api_response(str(e), status=400, success=False)
+
+    def get_authenticators(self):
+        if self.request.method == "POST":
+            self.authentication_classes = [JWTAuthentication]
+        return super().get_authenticators()
 
 
 class Machine(APIView):
