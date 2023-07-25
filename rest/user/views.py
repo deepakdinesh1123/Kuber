@@ -7,13 +7,14 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from utils.logger import log_debug
 from utils.response import get_api_response
 
 from .models import KuberUser
 
 
 class RegisterView(APIView):
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         vault_client = hvac.Client(url=os.getenv("VAULT_URL"))
         vault_token = os.getenv("VAULT_TOKEN")
 
@@ -46,24 +47,24 @@ class RegisterView(APIView):
         user.set_unusable_password()
         user.save()
 
-        jwt_payload = {"access_token": access_token}
+        # Extract the UUID of the newly registered user
+        user_uuid = str(user.id)
+
+        log_debug(f"id {user_uuid}")
+
+        jwt_payload = {"user_id": user_uuid}
         jwt_token = jwt.encode(
             jwt_payload, os.getenv("JWT_SECRET_KEY"), algorithm="HS256"
         )
 
-        # Extract the UUID of the newly registered user
-        user_uuid = str(user.id)
+        log_debug(f"token {jwt_token}")
 
         # Send user UUID and access token to HashiCorp Vault
         self.send_to_hashicorp_vault(
             vault_client, vault_token, user_uuid, access_token, username
         )
 
-        response_data = {"message": "User registered successfully"}
-        response_status = status.HTTP_201_CREATED
-        response = get_api_response(response_data, status=response_status, success=True)
-        response.set_cookie("access_token", jwt_token, max_age=3600)
-
+        response = get_api_response(jwt_token, status=200, success=True)
         return response
 
     def exchange_code_for_token(self, code):

@@ -36,7 +36,7 @@ class KuberUser(AbstractUser):
         max_length=100, editable=False, blank=True, null=True, name="github_username"
     )
     github_repos = models.JSONField(null=True, default=dict)
-    email = models.EmailField(max_length=100, unique=True)
+    email = models.EmailField(max_length=100, unique=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -45,8 +45,7 @@ class KuberUser(AbstractUser):
 
     objects = UserManager()
 
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username"]
+    USERNAME_FIELD = "username"
 
     def __str__(self):
         return self.username
