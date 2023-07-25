@@ -5,31 +5,31 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Optional as _Op
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
-class EnvironmentRequest(_message.Message):
-    __slots__ = ["name", "tag", "config", "images", "files", "type", "project_name"]
+class SandboxRequest(_message.Message):
+    __slots__ = ["name", "tag", "config", "images", "files", "env_type", "project_name"]
     NAME_FIELD_NUMBER: _ClassVar[int]
     TAG_FIELD_NUMBER: _ClassVar[int]
     CONFIG_FIELD_NUMBER: _ClassVar[int]
     IMAGES_FIELD_NUMBER: _ClassVar[int]
     FILES_FIELD_NUMBER: _ClassVar[int]
-    TYPE_FIELD_NUMBER: _ClassVar[int]
+    ENV_TYPE_FIELD_NUMBER: _ClassVar[int]
     PROJECT_NAME_FIELD_NUMBER: _ClassVar[int]
     name: str
     tag: str
     config: str
     images: _containers.RepeatedScalarFieldContainer[str]
     files: _containers.RepeatedScalarFieldContainer[str]
-    type: str
+    env_type: str
     project_name: str
-    def __init__(self, name: _Optional[str] = ..., tag: _Optional[str] = ..., config: _Optional[str] = ..., images: _Optional[_Iterable[str]] = ..., files: _Optional[_Iterable[str]] = ..., type: _Optional[str] = ..., project_name: _Optional[str] = ...) -> None: ...
+    def __init__(self, name: _Optional[str] = ..., tag: _Optional[str] = ..., config: _Optional[str] = ..., images: _Optional[_Iterable[str]] = ..., files: _Optional[_Iterable[str]] = ..., env_type: _Optional[str] = ..., project_name: _Optional[str] = ...) -> None: ...
 
-class EnvModReq(_message.Message):
+class SbxModReq(_message.Message):
     __slots__ = ["id"]
     ID_FIELD_NUMBER: _ClassVar[int]
     id: str
     def __init__(self, id: _Optional[str] = ...) -> None: ...
 
-class EnvCreationResponse(_message.Message):
+class SbxCreationResponse(_message.Message):
     __slots__ = ["message", "containers", "success"]
     MESSAGE_FIELD_NUMBER: _ClassVar[int]
     CONTAINERS_FIELD_NUMBER: _ClassVar[int]

@@ -19,3 +19,16 @@ def get_container(name: str) -> Container:
         return container
     except errors.NotFound:
         return None
+
+
+def is_container_running(name: str) -> bool:
+    try:
+        container = cli.containers.get(name)
+        if container.status == "running":
+            return True
+        else:
+            return False
+    except errors.NotFound:
+        return False
+    except errors.APIError:
+        return False

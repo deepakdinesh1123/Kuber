@@ -1,14 +1,16 @@
 import axios from "axios";
-import Cookies from "js-cookie";
+import { getCookie } from "cookies-next";
 
-export type JSON = {
-  [key: string]: string | number | boolean | null | JSON | Array<string>;
-};
+export type JSON = Record<
+  string,
+  string | number | boolean | null | JSON | Array<string>
+>;
 
 export interface AxiosRequest {
-  data: JSON;
+  data?: JSON;
   type: string;
   url: string;
+  baseUrl: string;
   headers?: JSON;
 }
 
@@ -17,28 +19,34 @@ export interface AxiosResponse {
   success: boolean;
 }
 
-export function handleApiRequest(request: AxiosRequest): AxiosResponse {
-  if (request.headers != undefined) {
+export async function handleApiRequest(
+  request: AxiosRequest,
+): Promise<AxiosResponse> {
+  if (getCookie("access_token")) {
     request.headers = {
-      Authorizaion: `Bearer ${Cookies.get("access_token")}`,
+      Authorization: `Bearer ${getCookie("access_token")}`,
       ...request.headers,
     };
   }
-  axios
-    .request({
+
+  try {
+    const response = await axios.request({
       url: request.url,
-      baseURL: process.env.NEXT_PUBLIC_HOST,
+      baseURL: "http://localhost:8000",
       method: request.type,
       data: request.data,
-    })
-    .then((res) => {
-      return res.data["response"], res.data["success"];
-    })
-    .catch((e) => {
-      console.log(e);
+      headers: request.headers,
     });
-  return {
-    data: {},
-    success: false,
-  };
+
+    return {
+      data: response.data.data,
+      success: response.data.success,
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      data: {},
+      success: false,
+    };
+  }
 }

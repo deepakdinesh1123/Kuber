@@ -7,7 +7,7 @@ from user.models import KuberUser
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = KuberUser
-        fields = ["id", "username", "email", "password"]
+        fields = ["id", "username", "email"]
 
     def create(self, validated_data):
         try:
@@ -19,3 +19,9 @@ class UserSerializer(serializers.ModelSerializer):
         except IntegrityError:
             raise UserAlreadyExists
         return user
+
+
+class CreatorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KuberUser
+        fields = ["username"]

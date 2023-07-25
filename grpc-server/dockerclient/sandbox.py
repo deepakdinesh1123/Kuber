@@ -17,7 +17,7 @@ def check_compose_file_exists(name: str) -> bool:
     pass
 
 
-def create_environment(
+def create_sandbox(
     name: str,
     config: dict,
     files: List[BinaryIO],
@@ -43,8 +43,9 @@ def create_environment(
     if env_type == "docker":
         file = preprocess_dockerfile(files[0])
         container_name = namegenerator.gen()
-        if not check_image_exists(name, tag):
+        if not check_image_exists(images[0], tag):
             build_image(name=images[0], dockerfile=file, tag=tag)
-        created = create_container(image=f"{images[0]}:{tag}", name=container_name)
+        sandbox_name = f"{name}_{container_name}"
+        created = create_container(image=f"{images[0]}:{tag}", name=sandbox_name)
         # upsert_containers(container_name, "admin")
-        return created, [container_name]
+        return created, [sandbox_name]
