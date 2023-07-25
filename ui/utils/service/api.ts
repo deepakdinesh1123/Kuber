@@ -39,7 +39,7 @@ export async function handleApiRequest(
       data: request.data,
     });
     return {
-      data: response.data.response,
+      data: response.data.data,
       success: response.data.success,
     };
   } catch (error) {

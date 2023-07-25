@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import Cookies from 'js-cookie';
-import { handleGithubAuthRequest } from '@/utils/service/ui';
-import { AxiosResponse } from 'axios';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import Cookies from "js-cookie";
+import { handleGithubAuthRequest } from "@/utils/service/ui";
+import { AxiosResponse } from "axios";
 
 const RedirectPage = () => {
   const router = useRouter();
   const [code, setCode] = useState<string | null>(null);
-  const [requestStatus, setRequestStatus] = useState<string>('');
-  const [accessToken, setAccessToken] = useState<string>('');
+  const [requestStatus, setRequestStatus] = useState<string>("");
+  const [accessToken, setAccessToken] = useState<string>("");
 
   useEffect(() => {
     const { query } = router;
@@ -21,26 +21,30 @@ const RedirectPage = () => {
   }, [router]);
 
   useEffect(() => {
-    const accessToken = Cookies.get('access_token');
-    setAccessToken(accessToken || '');
+    const accessToken = Cookies.get("access_token");
+    setAccessToken(accessToken || "");
   }, []);
 
   const sendPostRequest = async (code: string) => {
     try {
-      const response: AxiosResponse = await handleGithubAuthRequest(code);
+      const request = {
+        data: {
+          code: code,
+        },
+        type: "post",
+        url: "/users/auth/github/",
+      };
+      const response = await handleGithubAuthRequest(request);
+      console.log(response);
     } catch (error) {
-      console.error('Error:', error);
-      setRequestStatus('Error: ' + error);
+      console.error("Error:", error);
+      setRequestStatus("Error: " + error);
     }
   };
 
   return (
     <div>
-      {code ? (
-        <p>Code: {code}</p>
-      ) : (
-        <div>Loading...</div>
-      )}
+      {code ? <p>Code: {code}</p> : <div>Loading...</div>}
       {requestStatus && <p>{requestStatus}</p>}
       <p>Access Token: {accessToken}</p>
     </div>
