@@ -10,10 +10,6 @@ const MonacoEditor = dynamic(() => import("../../components/ide/editor"), {
 });
 
 export default function CreateEnvironment() {
-  const [env, setEnv] = useState("");
-  const [fileContent, setFileContent] = useState("");
-  const [config, setConfig] = useState("Enter your config");
-
   const [envData, setenvData] = useState({
     name: "",
     type: "",
@@ -32,7 +28,9 @@ export default function CreateEnvironment() {
     }));
   };
 
-  const handleSubmit = () => {};
+  const handleConfigChange = (event: SyntheticEvent) => {
+    setConfig(event.target.value);
+  };
 
   const handleTextAreaKeyDown = (event: SyntheticEvent) => {
     if (event.keyCode === 9) {

@@ -36,10 +36,7 @@ export async function getServerSideProps() {
 }
 
 export default function Dashboard({ envs }) {
-  const createnewEnv = () => {
-    router.push(`${process.env.NEXT_PUBLIC_HOST}/environments/create/`);
-  };
-
+  const router = useRouter();
   const createnewEnv = () => {
     router.push(`${process.env.NEXT_PUBLIC_HOST}/environments/create/`);
   };

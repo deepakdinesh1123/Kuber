@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import { handleGithubAuthRequest } from "@/utils/service/ui";
-import { AxiosResponse } from "axios";
+import { setCookie } from "cookies-next";
 
 const RedirectPage = () => {
   const router = useRouter();
@@ -35,7 +35,8 @@ const RedirectPage = () => {
         url: "/users/auth/github/",
       };
       const response = await handleGithubAuthRequest(request);
-      console.log(response);
+      const jwt_token = response.data;
+      setCookie("access_token", jwt_token);
     } catch (error) {
       console.error("Error:", error);
       setRequestStatus("Error: " + error);
