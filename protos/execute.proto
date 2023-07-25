@@ -4,12 +4,28 @@ package execution;
 
 service Execute {
     rpc execute_command(ExecuteRequest) returns (stream ExecutionResponse) {}
+    rpc execute_test(TestRequest) returns (TestResult) {}
 }
 
 message ExecuteRequest {
     string container_name = 1;
     string command = 2;
     string dir = 3;
+}
+
+message TestRequest {
+    string container_name = 1;
+    string test_script = 2;
+    string test_script_name = 3;
+    string test_cmd = 4;
+    string test_dir = 5;
+    string test_script_dir = 6;
+    string expected_output = 7;
+}
+
+message TestResult {
+    string result = 1;
+    bool success = 2;
 }
 
 message ExecutionResponse {

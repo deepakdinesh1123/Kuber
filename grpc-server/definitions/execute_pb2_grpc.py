@@ -19,12 +19,23 @@ class ExecuteStub(object):
                 request_serializer=execute__pb2.ExecuteRequest.SerializeToString,
                 response_deserializer=execute__pb2.ExecutionResponse.FromString,
                 )
+        self.execute_test = channel.unary_unary(
+                '/execution.Execute/execute_test',
+                request_serializer=execute__pb2.TestRequest.SerializeToString,
+                response_deserializer=execute__pb2.TestResult.FromString,
+                )
 
 
 class ExecuteServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def execute_command(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def execute_test(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -37,6 +48,11 @@ def add_ExecuteServicer_to_server(servicer, server):
                     servicer.execute_command,
                     request_deserializer=execute__pb2.ExecuteRequest.FromString,
                     response_serializer=execute__pb2.ExecutionResponse.SerializeToString,
+            ),
+            'execute_test': grpc.unary_unary_rpc_method_handler(
+                    servicer.execute_test,
+                    request_deserializer=execute__pb2.TestRequest.FromString,
+                    response_serializer=execute__pb2.TestResult.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -62,5 +78,22 @@ class Execute(object):
         return grpc.experimental.unary_stream(request, target, '/execution.Execute/execute_command',
             execute__pb2.ExecuteRequest.SerializeToString,
             execute__pb2.ExecutionResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def execute_test(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/execution.Execute/execute_test',
+            execute__pb2.TestRequest.SerializeToString,
+            execute__pb2.TestResult.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
