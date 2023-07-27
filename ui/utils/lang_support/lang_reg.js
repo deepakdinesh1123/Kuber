@@ -61,4 +61,28 @@ export function registerfileLanguage() {
       ],
     },
   });
+
+  //JSON register
+  monaco.languages.register({
+    id: "json",
+    extensions: [".json"],
+    aliases: ["JSON", "json"],
+    mimetypes: ["application/json"],
+  });
+
+  monaco.languages.setMonarchTokensProvider("json", {
+    tokenizer: {
+      root: [
+        [/{|}/, "delimiter.bracket"], // Object start and end
+        [/\[|\]/, "delimiter.square"], // Array start and end
+        [/"[^"]*":/, "key"], // Object key
+        [/".*?"/, "string"], // String
+        [/\b(?:true|false|null)\b/, "constant"], // Boolean and null literals
+        [/\b(?:-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?)\b/, "number"], // Number (integer, float, or scientific notation)
+        [/,/, "delimiter.comma"], // Comma
+        [/:/, "delimiter.colon"], // Colon
+        [/\s+/, ""], // Whitespace
+      ],
+    },
+  });
 }

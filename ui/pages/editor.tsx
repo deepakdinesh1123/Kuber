@@ -24,7 +24,7 @@ const Editor = () => {
       <MonacoEditor
         value={code}
         onChange={handleCodeChange}
-        language="Docker"
+        language="dockerfile"
       />
     </div>
   );

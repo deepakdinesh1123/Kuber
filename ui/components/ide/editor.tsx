@@ -34,7 +34,7 @@ const MonacoEditor = ({
       document.getElementById("monaco-editor")!,
       {
         theme: "vs-dark",
-        language: "rust",
+        language: language,
         value: value,
       },
     );
