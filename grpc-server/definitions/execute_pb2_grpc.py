@@ -14,7 +14,7 @@ class ExecuteStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.execute_command = channel.unary_stream(
+        self.execute_command = channel.stream_stream(
                 '/execution.Execute/execute_command',
                 request_serializer=execute__pb2.ExecuteRequest.SerializeToString,
                 response_deserializer=execute__pb2.ExecutionResponse.FromString,
@@ -24,7 +24,7 @@ class ExecuteStub(object):
 class ExecuteServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def execute_command(self, request, context):
+    def execute_command(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -33,7 +33,7 @@ class ExecuteServicer(object):
 
 def add_ExecuteServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'execute_command': grpc.unary_stream_rpc_method_handler(
+            'execute_command': grpc.stream_stream_rpc_method_handler(
                     servicer.execute_command,
                     request_deserializer=execute__pb2.ExecuteRequest.FromString,
                     response_serializer=execute__pb2.ExecutionResponse.SerializeToString,
@@ -49,7 +49,7 @@ class Execute(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def execute_command(request,
+    def execute_command(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -59,7 +59,7 @@ class Execute(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_stream(request, target, '/execution.Execute/execute_command',
+        return grpc.experimental.stream_stream(request_iterator, target, '/execution.Execute/execute_command',
             execute__pb2.ExecuteRequest.SerializeToString,
             execute__pb2.ExecutionResponse.FromString,
             options, channel_credentials,
