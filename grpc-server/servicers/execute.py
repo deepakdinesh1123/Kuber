@@ -2,7 +2,7 @@ import traceback
 
 import definitions.execute_pb2 as exe_pb2
 import definitions.execute_pb2_grpc as exe_grpc
-from dockerclient.execute import execute_command as exec_cmd
+from dockerclient.process import execute_command as exec_cmd
 from utils.logger import log_debug
 
 

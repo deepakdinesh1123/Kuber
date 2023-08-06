@@ -67,3 +67,21 @@
 
 # if __name__ == "__main__":
 #     create_sandbox_client()
+import asyncio
+
+
+async def main():
+    proc = await asyncio.subprocess.create_subprocess_shell(
+        "docker exec -i nerdy-fuchsia-spider sh inf.sh",
+        stdin=asyncio.subprocess.PIPE,
+        stdout=asyncio.subprocess.PIPE,
+    )
+    proc.stdin.write(b"bob\n")
+    # print(await proc.stdout.read(1024))
+    # proc.stdin.write(b"alice\n")
+    # print(await proc.stdout.read(1024))
+    # proc.stdin.write(b"quit\n")
+    await proc.wait()
+
+
+asyncio.run(main())
