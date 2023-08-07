@@ -31,11 +31,11 @@ def stop_sandbox():
     pass
 
 
-@router.post("/{sandbox_id}/{container}")
+@router.post("/{sandbox_id}/container/{container_id}")
 def stop_container():
     pass
 
 
-@router.get("/{sandbox_id}/{container}/logs")
+@router.get("/{sandbox_id}/container_id/{container_id}/logs")
 def get_container_logs():
     pass

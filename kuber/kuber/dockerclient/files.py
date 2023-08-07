@@ -1,4 +1,6 @@
+import asyncio
 import io
+import shlex
 import tarfile
 from typing import Generator
 
@@ -8,35 +10,57 @@ from dockerclient.client import cli
 from utils.exceptions import FileNotFound
 
 
-def get_file(container_name: str, file_name: str, path: str) -> ExecResult:
-    cont = cli.containers.get(container_name)
-    res = cont.exec_run(f"cat {file_name}", workdir=path, stream=True)
+def get_file(container_id: str, file_name: str, path: str) -> ExecResult:
+    cont = cli.containers.get(container_id)
+    res = cont.exec_run(f"cat {file_name}", workdir=path)
     if res.exit_code == 1:
         raise FileNotFound
-    return res
+    return res.output
 
 
-def upsert_file(
-    container_name: str, file_name: str, path: str, file_content: bytes
-) -> ExecResult:
-    cont = cli.containers.get(container_name)
+async def upsert_file(
+    container_id: str, file_name: str, path: str, file_content: bytes
+) -> bool:
+    cont = cli.containers.get(container_id)
     dir_check = cont.exec_run(f"test -d {path}")
     if dir_check.exit_code == 1:
         cont.exec_run(f"mkdir {path}")
-    filobj = io.BytesIO(file_content.encode("utf-8"))
-    tar_data = tarfile.open(fileobj=filobj, mode="w")
-    tar_data.close()
-    try:
-        res = cont.put_archive(path, tar_data)
-        print(f"result {res}")
-        return True
-    except NotFound:
-        res = cont.exec_run(f"touch {file_name}", workdir=path)
-        res = cont.put_archive(path, file_content)
+    res = await asyncio.subprocess.create_subprocess_shell(
+        f"docker exec -i {container_id} sh -c 'cd {path} && echo {file_content} >> {file_name}'"
+    )
+    out, _ = await res.communicate()
     return True
 
 
-def delete_file(container_name: str, file_name: str, path: str):
-    cont = cli.containers.get(container_name)
+def delete_file(container_id: str, file_name: str, path: str):
+    cont = cli.containers.get(container_id)
     cont.exec_run(f"rm {file_name}", workdir=path)
+    return True
+
+
+def get_folder(container_id: str, path: str) -> str | None:
+    cont = cli.containers.get(container_id)
+    dir_check = cont.exec_run(f"test -d {path}")
+    if dir_check.exit_code == 1:
+        return None
+    exit_code, out = cont.exec_run(f"ls {path}")
+    return out
+
+
+def create_folder(container_id: str, path: str, folder_name: str):
+    cont = cli.containers.get(container_id)
+    res = cont.exec_run(f"mkdir {folder_name}", workdir=path)
+    if res.exit_code == 0:
+        return True
+    return False
+
+
+def delete_folder(container_id: str, path: str) -> bool:
+    cont = cli.containers.get(container_id)
+    dir_check = cont.exec_run(f"test -d {path}")
+    if dir_check.exit_code == 1:
+        return False
+    res = cont.exec_run(f"rm -rf {path}")
+    if res.exit_code == 1:
+        return False
     return True
