@@ -67,21 +67,38 @@
 
 # if __name__ == "__main__":
 #     create_sandbox_client()
-import asyncio
+# import asyncio
 
 
-async def main():
-    proc = await asyncio.subprocess.create_subprocess_shell(
-        "docker exec -i nerdy-fuchsia-spider sh inf.sh",
-        stdin=asyncio.subprocess.PIPE,
-        stdout=asyncio.subprocess.PIPE,
-    )
-    proc.stdin.write(b"bob\n")
-    # print(await proc.stdout.read(1024))
-    # proc.stdin.write(b"alice\n")
-    # print(await proc.stdout.read(1024))
-    # proc.stdin.write(b"quit\n")
-    await proc.wait()
+# async def main():
+#     proc = await asyncio.subprocess.create_subprocess_shell(
+#         "docker exec -i nerdy-fuchsia-spider sh inf.sh",
+#         stdin=asyncio.subprocess.PIPE,
+#         stdout=asyncio.subprocess.PIPE,
+#     )
+#     proc.stdin.write(b"bob\n")
+#     # print(await proc.stdout.read(1024))
+#     # proc.stdin.write(b"alice\n")
+#     # print(await proc.stdout.read(1024))
+#     # proc.stdin.write(b"quit\n")
+#     await proc.wait()
 
 
-asyncio.run(main())
+# asyncio.run(main())
+
+import socket
+
+
+def find_unused_port():
+    # Create a socket object
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(("localhost", 0))  # Bind to an available port on localhost
+    _, port = sock.getsockname()  # Get the allocated port
+    sock.close()  # Close the socket
+
+    return port
+
+
+if __name__ == "__main__":
+    unused_port = find_unused_port()
+    print(f"An available unused port: {unused_port}")

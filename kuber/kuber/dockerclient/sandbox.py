@@ -45,6 +45,8 @@ def create_sandbox(
         if not check_image_exists(images[0], tag):
             build_image(name=images[0], dockerfile=file, tag=tag)
         sandbox_name = f"{name}_{container_name}"
-        created = create_container(image=f"{images[0]}:{tag}", name=sandbox_name)
+        created = create_container(
+            image=f"{images[0]}:{tag}", name=sandbox_name, ports=config.get("ports")
+        )
         # upsert_containers(container_name, "admin")
         return created, [sandbox_name]

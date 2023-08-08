@@ -1,5 +1,6 @@
 from typing import List
 
+from dockerclient import sandbox
 from fastapi import APIRouter
 from pydantic import BaseModel, Json
 
@@ -17,8 +18,18 @@ class Sandbox(BaseModel):
 
 
 @router.post("/")
-def create_sandbox(sandbox: Sandbox):
-    pass
+def create_sandbox(sand: Sandbox):
+    created, sandbox_name = sandbox.create_sandbox(
+        name=sand.name,
+        config=sand.config,
+        files=sand.files,
+        env_type=sand.env_type,
+        project_name=sand.project_name,
+        tag=sand.project_name,
+        images=sand.images,
+    )
+    if created:
+        return {"success": True, "sanboxes": sandbox_name}
 
 
 @router.delete("/{sandbox_id}")

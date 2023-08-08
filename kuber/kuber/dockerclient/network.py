@@ -1,3 +1,4 @@
+import socket
 from typing import List
 
 from dockerclient.client import cli
@@ -18,3 +19,13 @@ def check_network_exists(name: str) -> bool:
         if name == network.name:
             return True
     return False
+
+
+def find_unused_port():
+    # Create a socket object
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(("localhost", 0))  # Bind to an available port on localhost
+    _, port = sock.getsockname()  # Get the allocated port
+    sock.close()  # Close the socket
+
+    return port

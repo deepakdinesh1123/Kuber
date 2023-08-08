@@ -1,13 +1,22 @@
-from typing import Generator
+from typing import Generator, List
 
 from docker import errors
 from docker.models.containers import Container
 from dockerclient.client import cli
+from dockerclient.network import find_unused_port
 
 
-def create_container(name: str, image: str) -> bool:
+def create_container(name: str, image: str, ports: List[int] = None) -> bool:
     try:
-        cli.containers.run(name=name, image=image, detach=True, tty=True)
+        if ports is None:
+            cli.containers.run(name=name, image=image, detach=True, tty=True)
+        else:
+            port_mapping = {f"{cport}/tcp": find_unused_port() for cport in ports}
+            print(port_mapping)
+            # TODO update port mapping to db
+            cli.containers.run(
+                name=name, image=image, detach=True, tty=True, ports=port_mapping
+            )
     except Exception:
         return False
     return True
