@@ -1,0 +1,87 @@
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+}
+
+.App {
+  height: 100vh;
+  display: flex;
+}
+
+.Sidebar {
+  width: 18%;
+  background-color: #2d2d30;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.FileManager {
+  height: 100%;
+  overflow-y: auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.FileManager h1 {
+  font-size: 18px;
+  padding: 10px;
+  margin: 0;
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+}
+
+.EditorTerminalContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.MonacoEditor {
+  flex: 1;
+  overflow-y: auto;
+  margin: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background-color: #1e1e1e;
+}
+
+.MonacoEditor h1 {
+  font-size: 18px;
+  padding: 10px;
+  margin: 0;
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+}
+
+.Terminal {
+  position: relative;
+  height: 30%;
+  overflow-y: auto;
+  margin: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background-color: #2d2d30;
+}
+
+.Terminal h1 {
+  font-size: 14px;
+  padding: 10px;
+  margin: 0;
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+  z-index: 2;
+}
+
+.ResizableHandle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 8px;
+  cursor: ns-resize;
+  background-color: #3a3a3a;
+}
+
+/* Add more styles to match VSCode dark theme */
