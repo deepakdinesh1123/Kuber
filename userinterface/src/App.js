@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Resizable } from "react-resizable";
 import BasicTree from "./FolderTree";
 import Editor from "@monaco-editor/react";
@@ -28,6 +28,8 @@ export default function App() {
 
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
   const [terminalHeight, setTerminalHeight] = useState(150); // Initial height of the terminal
+  const [container, setContainer] = useState("nerdy-fuchsia-spider");
+  const workdir = useRef("/");
 
   const handleLanguageChange = (event) => {
     const currentLanguage = selectedLanguage;
@@ -83,7 +85,11 @@ export default function App() {
           </div>
           <div className="Terminal">
             <h1>Terminal</h1>
-            <XtermComponent height={`${terminalHeight - 25}px`} />
+            <XtermComponent
+              height={`${terminalHeight - 25}px`}
+              container={container}
+              workdir={workdir}
+            />
           </div>
         </div>
       </Resizable>

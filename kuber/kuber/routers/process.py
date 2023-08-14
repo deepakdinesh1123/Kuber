@@ -21,18 +21,25 @@ async def start_process(ws: WebSocket):
         await proc.get_pid()
         await ws.send_json({"status": "process started", "pid": proc.pid})
         while True:
-            print(f"{await proc.is_alive()}")
-            if not await proc.is_alive():
-                proc.kill()
-                await ws.close()
-                return
             data = await ws.receive_json()
             if data["action"] == "stdin":
                 proc.write_input(data["input"].encode("utf-8"))
             elif data["action"] == "kill":
                 await proc.proc_kill()
             elif data["action"] == "read":
+                if not await proc.is_alive():
+                    out = await proc.get_full_output()
+                    await ws.send_json({"out": out.decode()})
+                    proc.kill()
+                    await ws.close()
+                    return
                 out = await proc.readline()
+                # if out == b"" and not await proc.is_alive():
+                #     proc.kill()
+                #     await ws.close()
+                #     return
+                # if out == "":
+                #     pass
                 await ws.send_json({"out": out.decode()})
     except WebSocketDisconnect:
         await proc.proc_kill()

@@ -45,21 +45,21 @@ class Process:
                 details = line.split()
                 pid = details[0]
                 cmd = " ".join(details[1:])
-                print(f"cmd - {cmd}")
                 if cmd == self.command:
-                    print(f" found {cmd}, {self.command}")
                     self.pid = pid
                     break
 
     async def is_alive(self) -> bool:
+        if not self.pid:
+            return False
         tproc = await asyncio.subprocess.create_subprocess_shell(
-            f"docker exec -i {self.container_name} ps -p {self.pid}",
+            f"docker exec -i {self.container_name} ps -q {self.pid} -o state --no-headers",
             stdout=asyncio.subprocess.PIPE,
         )
-        stdout, _ = await tproc.communicate()
+        stdout, err = await tproc.communicate()
         lines = stdout.decode().split("\n")
-        print(lines)
-        if len(lines) == 2:
+        print(f"lines - {lines}")
+        if err:
             return False
         return True
 
@@ -90,3 +90,9 @@ class Process:
             self.proc.kill()
         except Exception:
             pass
+
+    async def get_full_output(self):
+        stdout, err = await self.proc.communicate()
+        if not err:
+            return stdout
+        return err
