@@ -58,13 +58,16 @@ class Process:
         )
         stdout, err = await tproc.communicate()
         lines = stdout.decode().split("\n")
-        print(f"lines - {lines}")
+        print(f"lines - {lines}", err)
         if err:
             return False
         return True
 
     async def readline(self) -> str:
-        line = await self.proc.stdout.readline()
+        try:
+            line = await asyncio.wait_for(self.proc.stdout.readline(), timeout=1)
+        except TimeoutError:
+            return ""
         return line
 
     async def proc_kill(self) -> bool:

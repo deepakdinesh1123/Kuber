@@ -33,14 +33,10 @@ async def start_process(ws: WebSocket):
                     proc.kill()
                     await ws.close()
                     return
-                out = await proc.readline()
-                # if out == b"" and not await proc.is_alive():
-                #     proc.kill()
-                #     await ws.close()
-                #     return
-                # if out == "":
-                #     pass
-                await ws.send_json({"out": out.decode()})
+                else:
+                    out = await proc.readline()
+                    print(f"output {out}")
+                    await ws.send_json({"out": out.decode()})
     except WebSocketDisconnect:
         await proc.proc_kill()
         proc.kill()
