@@ -84,4 +84,24 @@ body {
   background-color: #3a3a3a;
 }
 
+.RecordButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.RecordButton {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.RecordButton.Recording {
+  background-color: #dc3545;
+}
+
 /* Add more styles to match VSCode dark theme */

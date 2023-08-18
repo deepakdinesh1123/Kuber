@@ -28,6 +28,54 @@ export default function App() {
 
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
   const [terminalHeight, setTerminalHeight] = useState(150); // Initial height of the terminal
+  const [recordedStream, setRecordedStream] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
+
+  const handleRecordClick = async () => {
+    if (!isRecording) {
+      try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+        });
+        const recorder = new MediaRecorder(stream);
+        const recordedChunks = [];
+
+        recorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            recordedChunks.push(event.data);
+          }
+        };
+
+        recorder.onstop = () => {
+          const recordedBlob = new Blob(recordedChunks, { type: "video/webm" });
+          const url = URL.createObjectURL(recordedBlob);
+          const a = document.createElement("a");
+          a.style.display = "none";
+          a.href = url;
+          a.download = "screen-recording.webm";
+          document.body.appendChild(a);
+          a.click();
+          URL.revokeObjectURL(url);
+
+          if (stream.getVideoTracks().length > 0) {
+            stream.getVideoTracks()[0].stop();
+          }
+
+          setIsRecording(false); // Update recording state after stopping
+        };
+
+        recorder.start();
+        setRecordedStream(recorder);
+        setIsRecording(true);
+      } catch (error) {
+        console.error("Error accessing screen media:", error);
+      }
+    } else {
+      if (recordedStream) {
+        recordedStream.stop();
+      }
+    }
+  };
 
   const handleLanguageChange = (event) => {
     const currentLanguage = selectedLanguage;
@@ -84,6 +132,14 @@ export default function App() {
           <div className="Terminal">
             <h1>Terminal</h1>
             <XtermComponent height={`${terminalHeight - 25}px`} />
+          </div>
+          <div className="RecordButtonContainer">
+            <button
+              className={`RecordButton ${isRecording ? "Recording" : ""}`}
+              onClick={handleRecordClick}
+            >
+              {isRecording ? "Stop Recording" : "Start Recording"}
+            </button>
           </div>
         </div>
       </Resizable>
