@@ -1,0 +1,100 @@
+package main
+
+import (
+	"bytes"
+	"fmt"
+	"log"
+	"net/http"
+
+	"executor/docker"
+
+	"github.com/flynn/go-shlex"
+	"github.com/gorilla/websocket"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+)
+
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
+func execute(c echo.Context) error {
+	ws, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
+	if err != nil {
+		return err
+	}
+	defer ws.Close()
+
+	_, command, err := ws.ReadMessage()
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	cmd_split, err := shlex.Split(string(command))
+	if err != nil {
+		ws.WriteMessage(websocket.TextMessage, []byte("check cmd"))
+		return err
+	}
+
+	proc := docker.NewProcess("nerdy-fuchsia-spider", cmd_split, "/")
+	err = proc.Start()
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	fmt.Println("Process started")
+
+	pid, err := proc.GetPID()
+	if err != nil {
+		ws.WriteMessage(websocket.TextMessage, []byte("failed"))
+		return err
+	}
+	a := fmt.Sprintf("pid is %s", pid)
+	var buffer bytes.Buffer
+	buffer.WriteString(a)
+	ws.WriteMessage(websocket.TextMessage, buffer.Bytes())
+
+	for {
+		// Read
+		_, input, err := ws.ReadMessage()
+		if err != nil {
+			ws.WriteMessage(websocket.TextMessage, []byte("check inp"))
+			return err
+		}
+
+		switch string(input) {
+		case "read":
+			if !proc.IsAlive() {
+				out, err := proc.ReadOutput()
+				if err != nil {
+					ws.WriteMessage(websocket.TextMessage, []byte("read out error"))
+				}
+				ws.WriteMessage(websocket.TextMessage, []byte(out))
+				ws.Close()
+			} else {
+				out, err := proc.ReadLine()
+				if err != nil {
+					ws.WriteMessage(websocket.TextMessage, []byte("some error"))
+					return err
+				}
+				ws.WriteMessage(websocket.TextMessage, []byte(out))
+			}
+		default:
+			err := proc.WriteInput(string(input))
+			if err != nil {
+				ws.WriteMessage(websocket.TextMessage, []byte("write error"))
+			}
+		}
+	}
+}
+
+func main() {
+	e := echo.New()
+	e.Use(middleware.CORS())
+	e.Use(middleware.Logger())
+	e.GET("/ws", execute)
+	e.Logger.Fatal(e.Start(":1323"))
+}

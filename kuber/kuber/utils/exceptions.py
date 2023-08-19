@@ -1,2 +1,0 @@
-class FileNotFound(Exception):
-    pass

@@ -60,6 +60,9 @@ class Sandbox(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     name = models.CharField(max_length=100, unique=True)
     private = models.BooleanField(default=False)
+    containers = models.JSONField(
+        default={}, blank=True, null=True
+    )  # names of the containers are filled by kuber
 
     class Meta:
         constraints = [
