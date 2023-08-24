@@ -2,10 +2,13 @@ package docker
 
 import (
 	"bufio"
+	"context"
+	"errors"
 	"io"
 	"os/exec"
 	"strings"
 	"sync"
+	"time"
 )
 
 type Process struct {
@@ -95,6 +98,32 @@ func (p *Process) ReadLine() (string, error) {
 	reader := bufio.NewReader(p.stdout)
 	line, _, err := reader.ReadLine()
 	return string(line), err
+}
+
+func (p *Process) ReadLineWithTimeout(timeout time.Duration) (string, error) {
+	p.Lock.Lock()
+	defer p.Lock.Unlock()
+
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	reader := bufio.NewReader(p.stdout)
+	var line string
+	var err error
+
+	go func() {
+		select {
+		case <-ctx.Done():
+			err = errors.New("Timeout")
+		default:
+			var lineBytes []byte
+			lineBytes, _, err = reader.ReadLine()
+			line = string(lineBytes)
+		}
+	}()
+
+	<-ctx.Done()
+	return line, err
 }
 
 func (p *Process) ReadOutput() (string, error) {

@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"executor/docker"
+	"executor/routes"
 
 	"github.com/flynn/go-shlex"
 	"github.com/gorilla/websocket"
@@ -75,7 +77,8 @@ func execute(c echo.Context) error {
 				ws.WriteMessage(websocket.TextMessage, []byte(out))
 				ws.Close()
 			} else {
-				out, err := proc.ReadLine()
+				timeout := time.Second
+				out, err := proc.ReadLineWithTimeout(timeout)
 				if err != nil {
 					ws.WriteMessage(websocket.TextMessage, []byte("some error"))
 					return err
@@ -95,6 +98,8 @@ func main() {
 	e := echo.New()
 	e.Use(middleware.CORS())
 	e.Use(middleware.Logger())
+	routes.RegisterImageRoutes(e)
+	routes.RegisterSandboxRoutes(e)
 	e.GET("/ws", execute)
 	e.Logger.Fatal(e.Start(":1323"))
 }
