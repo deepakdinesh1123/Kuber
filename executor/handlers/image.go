@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"executor/docker"
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 )
 
 func CreateImage(c echo.Context) error {
@@ -22,9 +22,18 @@ func CreateImage(c echo.Context) error {
 		return err
 	}
 
-	out, imgName, err := docker.BuildImage(requestBody.ImageName, requestBody.Tag, requestBody.Dockerfile)
+	_, imgName, err := docker.BuildImage(requestBody.ImageName, requestBody.Tag, requestBody.Dockerfile)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+		log.Error().Str("Error", err.Error())
+		data := map[string]interface{}{
+			"success": false,
+			"error":   err.Error(),
+		}
+		return c.JSON(http.StatusInternalServerError, data)
 	}
-	return c.String(http.StatusOK, fmt.Sprintf("out:%s\nImageName:%s", out, imgName))
+	data := map[string]interface{}{
+		"success":   true,
+		"ImageName": imgName,
+	}
+	return c.JSON(http.StatusOK, data)
 }

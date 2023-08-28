@@ -83,8 +83,8 @@ func (c *Container) IsContainerRunning() models.Response {
 	return resp
 }
 
-func (c *Container) CreateFile(FilePath string) (string, error) {
-	cmd := exec.Command("docker", "exec", "-i", "touch", FilePath)
+func (c *Container) GetFile(FilePath string) (string, error) {
+	cmd := exec.Command("docker", "exec", "-i", "cat", FilePath)
 	output, err := cmd.Output()
 	if err != nil {
 		return "", err
@@ -92,8 +92,8 @@ func (c *Container) CreateFile(FilePath string) (string, error) {
 	return string(output), nil
 }
 
-func (c *Container) GetFile(FilePath string) (string, error) {
-	cmd := exec.Command("docker", "exec", "-i", "cat", FilePath)
+func (c *Container) CreateFile(FilePath string) (string, error) {
+	cmd := exec.Command("docker", "exec", "-i", "touch", FilePath)
 	output, err := cmd.Output()
 	if err != nil {
 		return "", err

@@ -50,6 +50,7 @@ func (s *Sandbox) CreateSandbox() (*Container, error) {
 			return nil, err
 		}
 		fmt.Println(out)
+
 		return container, nil
 	}
 	return nil, nil

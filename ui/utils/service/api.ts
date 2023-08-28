@@ -10,7 +10,7 @@ export interface AxiosRequest {
   data?: JSON;
   type: string;
   url: string;
-  baseUrl: string;
+  baseUrl?: string;
   headers?: JSON;
 }
 

@@ -11,9 +11,7 @@ import (
 
 func BuildImage(imageName, tag, dockerfile string) (string, string, error) {
 	if exists, _ := CheckImageExists(imageName); !exists {
-		fmt.Println(exists)
 		imgNameWithId := fmt.Sprintf("%s-%s:%s", imageName, uuid.NewString(), tag)
-		fmt.Println(imgNameWithId)
 		dockerFile := bytes.NewBufferString(dockerfile)
 
 		cmd := exec.Command("docker", "build", "-t", imgNameWithId, "-")

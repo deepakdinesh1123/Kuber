@@ -1,9 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Resizable } from "react-resizable";
 import BasicTree from "./FolderTree";
 import Editor from "@monaco-editor/react";
 import XtermComponent from "./XtermComponent";
 import "./styles.css";
+import Cookies from "js-cookie";
 
 const languageOptions = [
   { label: "JavaScript", value: "javascript" },
@@ -16,6 +17,12 @@ const languageOptions = [
 ];
 
 export default function App() {
+  useEffect(() => {
+    if (Cookies.get("access_token") === undefined) {
+      window.location.href = "http://localhost:3000";
+    }
+  });
+
   const [editorContent, setEditorContent] = useState({
     javascript: "",
     python: "",
