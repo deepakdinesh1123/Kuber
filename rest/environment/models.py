@@ -1,8 +1,8 @@
 from uuid import uuid4
 
-from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from user.models import KuberUser, Role
+from user.models import KuberUser
+from utils.mixins.model_mixins import TimeStampMixin
 
 ENVIRONMENT_CHOICES = (("compose", "docker-compose"), ("docker", "docker"))
 CATEGORY_CHOICES = (("p", "p"), ("g", "g"))
@@ -13,11 +13,17 @@ SANDBOX_ACTIONS = (
 )
 
 
+class DockerImage(TimeStampMixin):
+    name = models.CharField(max_length=100)
+    Dockerfile = models.CharField(max_length=1000)
+    created_by = models.ForeignKey(KuberUser, on_delete=models.CASCADE)
+
+
 # Create your models here.
 class Environment(models.Model):
-    env_id = models.UUIDField(primary_key=True, default=uuid4, name="env_id")
-    env_name = models.CharField(max_length=100, unique=True, name="env_name")
-    images = models.CharField(max_length=100, name="dockerimage")
+    id = models.UUIDField(primary_key=True, default=uuid4, name="env_id")
+    name = models.CharField(max_length=100, unique=True, name="env_name")
+    image = models.ForeignKey(DockerImage, on_delete=models.DO_NOTHING)
     dockerfile = models.CharField(max_length=1000, name="dockerfile")
     creator = models.ForeignKey(
         to=KuberUser, related_name="+", to_field="id", on_delete=models.CASCADE
@@ -53,13 +59,14 @@ class Sandbox(models.Model):
     )
     env = models.ForeignKey(
         to=Environment,
-        related_name="+",
-        to_field="env_id",
         on_delete=models.CASCADE,
     )
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     name = models.CharField(max_length=100, unique=True)
     private = models.BooleanField(default=False)
+    containers = models.JSONField(
+        default=dict, blank=True, null=True
+    )  # names of the containers are filled by kuber
 
     class Meta:
         constraints = [

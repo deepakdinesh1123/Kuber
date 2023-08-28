@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "container",
     "environment",
     "language_support",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -146,7 +147,16 @@ AUTH_USER_MODEL = "user.KuberUser"
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
 REST_FRAMEWORK = {
-    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning"
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Quber",
+    "DESCRIPTION": "REST API for Quber",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # OTHER SETTINGS
+}

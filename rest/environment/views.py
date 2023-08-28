@@ -1,20 +1,25 @@
 import json
+import os
 import traceback
 
+import requests
 from django.shortcuts import render
-from google.protobuf.json_format import MessageToDict, MessageToJson
-from grpc_client.sandbox import create_sandbox
 from rest_framework import status
+from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from user.authentication import JWTAuthentication
+from user.authentication import JWTAuthentication, ResourceAccessAuthentication
 from utils.logger import log_debug, log_error, log_info
 from utils.response import get_api_response
 
-from .models import Environment, Sandbox
-from .serializers import DockerEnvironmentSerializer
+from .models import DockerImage, Environment, Sandbox
+from .serializers import (
+    DockerEnvironmentSerializer,
+    DockerFileSerializer,
+    DockerImageSerializer,
+)
 
 
 # Create your views here.
@@ -30,11 +35,11 @@ class DockerRegistry(APIView):
         pass
 
 
-class DockerImage(APIView):
-    permission_classes = [IsAuthenticated]
+# class DockerImage(APIView):
+#     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
-        pass
+#     def post(self, request):
+#         pass
 
 
 class EnvironmentView(APIView):
@@ -45,7 +50,7 @@ class EnvironmentView(APIView):
                 serializer = DockerEnvironmentSerializer(env, many=False)
                 return get_api_response(serializer.data, status=200, success=True)
             except Exception as e:
-                return get_api_response(str(e), status=400, success=False)
+                return get_api_response(str(e), status=500, success=False)
         else:
             try:
                 envs = Environment.objects.all()
@@ -74,10 +79,10 @@ class EnvironmentView(APIView):
                 log_error(traceback.format_exc())
                 return get_api_response(str(e), status=400, success=False)
 
-    def get_authenticators(self):
-        if self.request.method == "POST":
-            self.authentication_classes = [JWTAuthentication]
-        return super().get_authenticators()
+    # def get_authenticators(self):
+    #     if self.request.method == "POST":
+    #         self.authentication_classes = [JWTAuthentication]
+    #     return super().get_authenticators()
 
 
 class Machine(APIView):
@@ -95,19 +100,61 @@ class Machine(APIView):
 
 class SandboxView(APIView):
     def post(self, request: Request, env_id=None, *args, **kwargs) -> Response:
-        env = Environment.objects.get(env_id=env_id)
-        response = create_sandbox(
-            name=env.env_name,
-            tag="1.0",
-            config=env.config,
-            images=env.dockerimage,
-            files=env.dockerfile,
-            env_type=env.type,
-            projectName="blank",
-        )
-        if response["success"]:
-            return get_api_response(MessageToJson(response), status=200, success=True)
-        else:
+        Environment.objects.get(env_id=env_id)
+
+
+@api_view(("POST",))
+@authentication_classes((JWTAuthentication,))
+def create_image(request: Request, *args, **kwargs) -> Request:
+    user = request.user
+    data = request.data
+
+    url = f"{os.getenv('EXECUTOR_API_HOST')}/image/build"
+
+    payload = json.dumps(
+        {
+            "ImageName": data["ImageName"],
+            "Dockerfile": data["Dockerfile"],
+            "Tag": data["Tag"],
+        }
+    )
+    headers = {"Content-Type": "application/json"}
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+    if response.status_code != 200:
+        return get_api_response("Could not create image", 500, False)
+    resp_data = response.json()
+    DockerImage.objects.create(
+        name=resp_data["ImageName"], created_by=user, Dockerfile=data["Dockerfile"]
+    )
+    return get_api_response("Image created", 200, True)
+
+
+@api_view(("GET",))
+@authentication_classes((JWTAuthentication,))
+def get_all_images(request: Request, *args, **kwargs) -> Response:
+    user = request.user
+    log_debug(user.username)
+    try:
+        images = DockerImage.objects.filter(created_by=user)
+        serializer = DockerImageSerializer(images, many=True)
+        return get_api_response(serializer.data, status=200, success=True)
+    except Exception as e:
+        return get_api_response(str(e), status=500, success=False)
+
+
+@api_view(("GET",))
+@authentication_classes((ResourceAccessAuthentication,))
+def get_image(request: Request, image_id: int, *args, **kwargs):
+    user = request.user
+    log_debug(user)
+    try:
+        image = DockerImage.objects.get(id=image_id)
+        serializer = DockerFileSerializer(image, many=False)
+        if serializer.data == {}:
             return get_api_response(
-                "Sandbox could not be created", status=400, success=False
+                "No image with specified ID", status=404, success=False
             )
+        return get_api_response(serializer.data, status=200, success=True)
+    except Exception as e:
+        return get_api_response(str(e), status=500, success=False)

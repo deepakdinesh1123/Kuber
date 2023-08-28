@@ -54,3 +54,14 @@ services:
     volumes:
       - ./ui:/usr/src/app
     network_mode: host
+
+  userinterface:
+    build:
+      context: .
+      dockerfile: dockerfiles/userinterface.dockerfile
+    environment:
+      - NODE_ENV=development
+      - PORT=4000
+    volumes:
+      - ./userinterface:/usr/src/app
+    network_mode: host

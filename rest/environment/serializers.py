@@ -1,4 +1,4 @@
-from environment.models import Environment
+from environment.models import DockerImage, Environment
 from rest_framework import serializers
 from user.serializers import CreatorSerializer
 
@@ -9,3 +9,19 @@ class DockerEnvironmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Environment
         fields = ["env_id", "env_name", "creator", "created_at", "config"]
+
+
+class DockerImageSerializer(serializers.ModelSerializer):
+    created_by = CreatorSerializer()
+
+    class Meta:
+        model = DockerImage
+        fields = ["id", "name", "created_by"]
+
+
+class DockerFileSerializer(serializers.ModelSerializer):
+    created_by = CreatorSerializer()
+
+    class Meta:
+        model = DockerImage
+        fields = ["id", "name", "created_by", "Dockerfile"]

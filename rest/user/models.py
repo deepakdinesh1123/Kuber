@@ -3,6 +3,7 @@ from uuid import uuid4
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
 from django.db import models
+from utils.mixins.model_mixins import TimeStampMixin
 
 
 class UserManager(BaseUserManager):
@@ -42,7 +43,6 @@ class KuberUser(AbstractUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-
     objects = UserManager()
 
     USERNAME_FIELD = "username"
@@ -52,10 +52,17 @@ class KuberUser(AbstractUser):
 
 
 class Role(models.Model):
-    role_id = models.UUIDField(
+    id = models.UUIDField(
         primary_key=True, default=uuid4, name="role_id", editable=False
     )
     role_name = models.CharField(
         max_length=20, editable=False, name="role_name", unique=True
     )
     permissions = models.JSONField(unique=True, editable=False)
+
+
+# class Organization(TimeStampMixin):
+#     pass
+
+# class Team(TimeStampMixin):
+#     pass

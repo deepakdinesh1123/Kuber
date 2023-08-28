@@ -61,10 +61,10 @@ export default function Dashboard({ envs }) {
       </button>
       {envs.map((env, index) => (
         <Card
-          key={env.env_id}
-          title={env.env_name}
-          description="lol"
-          handleClick={() => handleClick(env.env_id)}
+          key={env.id}
+          title={env.name}
+          handleClick={() => handleClick(env.id)}
+          buttonText={"Create Sandbox"}
         />
       ))}
     </>

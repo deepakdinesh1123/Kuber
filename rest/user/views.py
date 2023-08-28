@@ -101,3 +101,7 @@ class RegisterView(APIView):
         vault_client.secrets.kv.v2.create_or_update_secret(
             path=username, secret={user_uuid: access_token}
         )
+
+
+class PermissionView(APIView):
+    pass

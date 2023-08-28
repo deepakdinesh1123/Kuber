@@ -2,32 +2,7 @@ import os
 import re
 import sys
 
-
-def add_import_statement(file_path):
-    with open(file_path, "r") as file:
-        contents = file.read()
-        pattern = r"^\s*import\s+.*?grpc.*?;$"
-        match = re.search(pattern, contents, re.MULTILINE)
-        if match:
-            import_statement = match.group()
-            updated_import = import_statement.replace("import", "import from defs", 1)
-            contents = contents.replace(import_statement, updated_import)
-
-    with open(file_path, "w") as file:
-        file.write(contents)
-
-
-def process_directory(directory_path):
-    for root, _, files in os.walk(directory_path):
-        for file in files:
-            file_path = os.path.join(root, file)
-            if file.endswith(".py"):
-                add_import_statement(file_path)
-
-
-# Provide the directory path here
-directory_path = "/path/to/directory"
-process_directory(directory_path)
+import jwt
 
 
 def remove_migrations():
@@ -42,6 +17,21 @@ def remove_migrations():
                     os.remove(f"./rest/{folder}/migrations/{obj}")
 
 
+def generate_jwt(user_id):
+    payload = {"user_id": user_id}
+    secret_key = """MIIBVAIBADANBgkqhkiG9w0BAQEFAASCAT4wggE6AgEAAkEAwyBbW8AG8GvDakJj
+GkA5A4TV3B+2BX2CD8rZtso3XBFVXgTfghQm+imXxqSYH0rCEWNVdFDrM0tCVLpu
+eZIk3wIDAQABAkATJ+5xDnJ9bs69ROUg/RxiBclw3IkSmUQ4ZBn6B3j+kMS4zET1
+x/NM5t5D4Ei9b+L+uqGY1twz1ybGzOSDPNEBAiEA2ZDRdoLayWkTh0US/ZQXEnfj
+Hc2Ook0Xj3/YyHHsOekCIQCYA9fY9B9lTtjXwNf0NE9K/2NTmr/FtTV3/mfttA+X
+mQIgc6vTh68eT07ITG0i6xCz/8tbeobvouIUPvpMgZ1QpB0CIQCGao34NcKbcV8B
+JvsDT7xX2lgX35Mywd22MXvFFhiEBwIgCcJcE62EBT7jE7sGLdYK4xWDWl0WY4iH
+/pV5nO/BqVE="""
+    token = jwt.encode(payload, secret_key, algorithm="HS256")
+    return token
+
+
 if __name__ == "__main__":
     # action = sys.argv[1]
-    remove_migrations()
+    # remove_migrations()
+    print(generate_jwt("49438dd1-c87b-4d7e-a9db-a1d93e72554c"))

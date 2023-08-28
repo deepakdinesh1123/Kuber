@@ -18,7 +18,7 @@ export default function CreateEnvironment() {
   });
   const [fileContent, setFileContent] = useState("");
   const [config, setConfig] = useState("Enter your config");
-  const [configureEnv, setConfigureEnv] = useState(true);
+  const [jsonData, setJsonData] = useState(null); // State to store the JSON data
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -28,8 +28,8 @@ export default function CreateEnvironment() {
     }));
   };
 
-  const handleConfigChange = (event: SyntheticEvent) => {
-    setConfig(event.target.value);
+  const handleConfigChange = (content: String) => {
+    setConfig(content);
   };
 
   const handleTextAreaKeyDown = (event: SyntheticEvent) => {
@@ -48,9 +48,30 @@ export default function CreateEnvironment() {
     }
   };
 
-  const EnvDetailsForm = () => {
-    return (
-      <form>
+  const handleCodeChange = (content: string) => {
+    setFileContent(content);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const jsonData = {
+      name: envData.name,
+      type: envData.type,
+      image_name: envData.image_name,
+      image_tag: envData.image_tag,
+      config: config,
+      docker_file_content: fileContent,
+    };
+    setJsonData(jsonData); // Store the JSON data in the state
+    console.log(jsonData);
+  };
+
+  // ... (rest of the code)
+
+  return (
+    <>
+      <form onSubmit={handleSubmit}>
         <label>
           Environment Name:
           <input
@@ -63,8 +84,8 @@ export default function CreateEnvironment() {
         <br />
         <label>
           Environment Type:
-          <select onChange={handleChange}>
-            <option value="default">Select Environemnt Type</option>
+          <select name="type" value={envData.type} onChange={handleChange}>
+            <option value="default">Select Environment Type</option>
             <option value="docker">Docker</option>
             <option value="compose">Docker Compose</option>
           </select>
@@ -73,7 +94,7 @@ export default function CreateEnvironment() {
         <label>
           Image Name:
           <input
-            name="message"
+            name="image_name"
             value={envData.image_name}
             onChange={handleChange}
           />
@@ -82,101 +103,37 @@ export default function CreateEnvironment() {
         <label>
           Image Tag:
           <input
-            name="message"
+            name="image_tag"
             value={envData.image_tag}
             onChange={handleChange}
           />
         </label>
-        <br />
-        <button
-          onClick={() => {
-            setConfigureEnv(false);
-          }}
-        >
-          Configure Docker
-        </button>
-      </form>
-    );
-  };
-  const handleCodeChange = (content: string) => {
-    setFileContent(content);
-  };
 
-  const handleSubmit = (event) => {
-    const request = {
-      data: {
-        name: envData.name,
-        config: config,
-        images: [`${envData.image_name}`],
-        type: envData.type,
-      },
-      type: "POST",
-      url: "/environment/api/v1/createEnvironment/",
-    };
-    const resp = handleCreateEnvironment(request);
-    console.log(resp);
-  };
-
-  const [windowSize, setWindowSize] = useState({
-    width: typeof window !== "undefined" ? window.innerWidth : 0,
-    height: typeof window !== "undefined" ? window.innerHeight : 0,
-  });
-
-  useEffect(() => {
-    function handleResize() {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight,
-      });
-    }
-
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  return (
-    <>
-      {configureEnv ? (
-        <EnvDetailsForm />
-      ) : (
-        <div>
-          <div style={{ display: "flex" }}>
-            <button type="button" onClick={handleSubmit}>
-              Submit
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setConfigureEnv(true);
-              }}
-            >
-              Configgure Environment
-            </button>
-          </div>
-
-          <div style={{ display: "flex" }}>
-            <MonacoEditor
-              value={"# Enter your dockerfile "}
-              onChange={handleCodeChange}
-              language="Docker"
-              width="80%"
-            />
-            <textarea
-              style={{
-                backgroundColor: "black",
-                caretColor: "white",
-                width: "20%",
-                height: "auto",
-                color: "white",
-              }}
-              onKeyDown={handleTextAreaKeyDown}
-              value={config}
-              onChange={handleConfigChange}
-            ></textarea>
-          </div>
+        <div style={{ display: "flex" }}>
+          <input type="submit" value="Submit" />
         </div>
-      )}
+      </form>
+
+      <div style={{ display: "flex" }}>
+        <div style={{ flex: "6" }}>
+          <MonacoEditor
+            value={"#Enter your dockerfile"}
+            onChange={handleCodeChange}
+            language="dockerfile"
+            width="100%"
+            height="300px"
+          />
+        </div>
+        <div style={{ flex: "3" }}>
+          <MonacoEditor
+            value={config}
+            onChange={handleConfigChange}
+            language="json"
+            width="100%"
+            height="300px"
+          />
+        </div>
+      </div>
     </>
   );
 }
