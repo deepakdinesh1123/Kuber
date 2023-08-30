@@ -24,6 +24,11 @@ urlpatterns = [
         EnvironmentView.as_view(),
         name="environment-api",
     ),
+    re_path(
+        "sandbox/",
+        SandboxView.as_view(),
+        name="getSandbox",
+    ),
     re_path("machine/", Machine.as_view(), name="machine"),
     re_path("image/build", create_image, name="build_image"),
     re_path(r"image/(?P<image_id>\d+)/$", get_image, name="get_image"),

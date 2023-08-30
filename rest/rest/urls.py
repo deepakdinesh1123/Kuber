@@ -33,6 +33,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     re_path("languages/", include("language_support.urls")),
     re_path("environments/", include("environment.urls")),
+    re_path("sandboxes/", include("environment.urls")),
     re_path("users/", include("user.urls")),
     re_path("images/", include("environment.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),

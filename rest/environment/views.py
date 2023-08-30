@@ -19,6 +19,7 @@ from .serializers import (
     DockerEnvironmentSerializer,
     DockerFileSerializer,
     DockerImageSerializer,
+    SandboxSerializer,
 )
 
 
@@ -101,6 +102,14 @@ class Machine(APIView):
 class SandboxView(APIView):
     def post(self, request: Request, env_id=None, *args, **kwargs) -> Response:
         Environment.objects.get(env_id=env_id)
+
+    def get(self, request: Request, *args, **kwargs) -> Response:
+        try:
+            sandboxes = Sandbox.objects.all()
+            serializer = SandboxSerializer(sandboxes, many=True)
+            return get_api_response(serializer.data, status=200, success=True)
+        except Exception as e:
+            return get_api_response(str(e), status=500, success=False)
 
 
 @api_view(("POST",))
