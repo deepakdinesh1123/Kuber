@@ -79,10 +79,10 @@ class EnvironmentView(APIView):
                 log_error(traceback.format_exc())
                 return get_api_response(str(e), status=400, success=False)
 
-    # def get_authenticators(self):
-    #     if self.request.method == "POST":
-    #         self.authentication_classes = [JWTAuthentication]
-    #     return super().get_authenticators()
+    def get_authenticators(self):
+        if self.request.method == "POST":
+            self.authentication_classes = [JWTAuthentication]
+        return super().get_authenticators()
 
 
 class Machine(APIView):
