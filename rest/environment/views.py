@@ -3,6 +3,10 @@ import os
 import traceback
 
 import requests
+from accounts.authentication import (
+    JWTAuthentication,
+    ResourceAccessAuthentication,
+)
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
@@ -10,11 +14,10 @@ from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from user.authentication import JWTAuthentication, ResourceAccessAuthentication
 from utils.logger import log_debug, log_error, log_info
 from utils.response import get_api_response
-from .forms import EnvironmentForm, generate_json_schema
 
+from .forms import EnvironmentForm, generate_json_schema
 from .models import DockerImage, Environment, Sandbox
 from .serializers import (
     DockerEnvironmentSerializer,
@@ -22,7 +25,6 @@ from .serializers import (
     DockerImageSerializer,
     SandboxSerializer,
 )
-
 
 # Create your views here.
 

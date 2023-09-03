@@ -33,5 +33,5 @@ JvsDT7xX2lgX35Mywd22MXvFFhiEBwIgCcJcE62EBT7jE7sGLdYK4xWDWl0WY4iH
 
 if __name__ == "__main__":
     # action = sys.argv[1]
-    # remove_migrations()
-    print(generate_jwt("49438dd1-c87b-4d7e-a9db-a1d93e72554c"))
+    remove_migrations()
+    # print(generate_jwt("49438dd1-c87b-4d7e-a9db-a1d93e72554c"))

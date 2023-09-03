@@ -45,8 +45,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "rest_framework_simplejwt",
-    "user",
-    "container",
+    "accounts",
     "environment",
     "language_support",
     "drf_spectacular",
@@ -62,7 +61,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "user.middleware.RequestResponseLoggingMiddleware",
+    "accounts.middleware.RequestResponseLoggingMiddleware",
 ]
 
 ROOT_URLCONF = "rest.urls"
@@ -142,7 +141,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-AUTH_USER_MODEL = "user.KuberUser"
+AUTH_USER_MODEL = "accounts.User"
 
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
