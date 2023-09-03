@@ -6,6 +6,7 @@ from environment.views import (
     create_image,
     get_all_images,
     get_image,
+    json_schema_view,
 )
 
 urlpatterns = [
@@ -25,12 +26,13 @@ urlpatterns = [
         name="environment-api",
     ),
     re_path(
-        "sandbox/",
+        r"sandbox/",
         SandboxView.as_view(),
         name="getSandbox",
     ),
     re_path("machine/", Machine.as_view(), name="machine"),
     re_path("image/build", create_image, name="build_image"),
     re_path(r"image/(?P<image_id>\d+)/$", get_image, name="get_image"),
-    re_path("", get_all_images, name="get_all_images"),
+    # re_path("", get_all_images, name="get_all_images"),
+    re_path("forms/env/", json_schema_view, name="json_schema"),
 ]

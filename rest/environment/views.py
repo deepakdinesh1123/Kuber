@@ -3,7 +3,7 @@ import os
 import traceback
 
 import requests
-from django.shortcuts import render
+from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 from user.authentication import JWTAuthentication, ResourceAccessAuthentication
 from utils.logger import log_debug, log_error, log_info
 from utils.response import get_api_response
+from .forms import EnvironmentForm, generate_json_schema
 
 from .models import DockerImage, Environment, Sandbox
 from .serializers import (
@@ -24,6 +25,8 @@ from .serializers import (
 
 
 # Create your views here.
+
+
 class DockerRegistry(APIView):
     parser_classes = [IsAuthenticated]
 
@@ -80,10 +83,10 @@ class EnvironmentView(APIView):
                 log_error(traceback.format_exc())
                 return get_api_response(str(e), status=400, success=False)
 
-    # def get_authenticators(self):
-    #     if self.request.method == "POST":
-    #         self.authentication_classes = [JWTAuthentication]
-    #     return super().get_authenticators()
+    def get_authenticators(self):
+        if self.request.method == "POST":
+            self.authentication_classes = [JWTAuthentication]
+        return super().get_authenticators()
 
 
 class Machine(APIView):
@@ -100,8 +103,10 @@ class Machine(APIView):
 
 
 class SandboxView(APIView):
+    authentication_classes = [JWTAuthentication]
+
     def post(self, request: Request, env_id=None, *args, **kwargs) -> Response:
-        Environment.objects.get(env_id=env_id)
+        pass
 
     def get(self, request: Request, *args, **kwargs) -> Response:
         try:
@@ -110,6 +115,14 @@ class SandboxView(APIView):
             return get_api_response(serializer.data, status=200, success=True)
         except Exception as e:
             return get_api_response(str(e), status=500, success=False)
+
+
+@api_view(("GET",))
+@authentication_classes((JWTAuthentication,))
+def json_schema_view(request: Request, *args, **kwargs) -> Response:
+    json_schema = generate_json_schema(EnvironmentForm)
+    log_debug(json_schema)
+    return get_api_response(json_schema, status=200, success=True)
 
 
 @api_view(("POST",))

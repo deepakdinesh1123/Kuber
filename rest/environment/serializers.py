@@ -28,9 +28,9 @@ class DockerFileSerializer(serializers.ModelSerializer):
 
 
 class SandboxSerializer(serializers.ModelSerializer):
-    sandbox_creator = serializers.CharField(source="sandbox_creator.username")
-    user = serializers.CharField(source="user.username")
-    env = serializers.CharField(source="env.env_name")
+    # sandbox_creator = serializers.CharField(source="sandbox_creator.username")
+    # user = serializers.CharField(source="user.username")
+    # env = serializers.CharField(source="env.env_name")
 
     class Meta:
         model = Sandbox
