@@ -8,17 +8,6 @@ services:
       POSTGRES_DB: kuber
     network_mode: host
 
-  envoy:
-    image: envoyproxy/envoy:v1.25.3
-    command: ["envoy", "-c", "/etc/envoy.yaml"]
-    volumes:
-      - ./envoy.yaml:/etc/envoy.yaml
-    network_mode: host
-
-  redis:
-    image: redis:latest
-    network_mode: host
-
   vault:
     image: vault:latest
     environment:
@@ -34,8 +23,6 @@ services:
       - DEBUG=True
     depends_on:
       - postgres
-      - envoy
-      - redis
     volumes:
       - ./rest:/rest
     network_mode: host
@@ -47,8 +34,6 @@ services:
     depends_on:
       - rest_api
       - postgres
-      - envoy
-      - redis
     environment:
       - NODE_ENV=development
     volumes:
@@ -65,3 +50,15 @@ services:
     volumes:
       - ./userinterface:/usr/src/app
     network_mode: host
+  
+  permify:
+    image: permify/permify:v0.4.7
+    volumes:
+      - ./config/:/config
+    command: ["serve", "-c=/config/permify_config.yaml"]
+    network_mode: host
+    depends_on:
+      - postgres
+      - ui
+      - rest_api
+      - vault
