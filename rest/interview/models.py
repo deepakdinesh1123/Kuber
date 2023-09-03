@@ -17,9 +17,9 @@ def default_config(self):
 
 
 class Interview(TimeStampMixin):
-    int_id = models.UUIDField(primary_key=True, default=uuid4, name="interview_id")
+    id = models.UUIDField(primary_key=True, default=uuid4, name="interview_id")
     environment = models.ForeignKey("environment.Environment", on_delete=models.CASCADE)
-    creator = models.ForeignKey("user.KuberUser", on_delete=models.CASCADE)
+    creator = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
     config = models.JSONField(default=default_config)
     time_limit = models.TimeField(null=True)
 
@@ -27,14 +27,20 @@ class Interview(TimeStampMixin):
         return self.int_id
 
 
-class ValidateSubmission(TimeStampMixin):
-    script = models.CharField(max_length=1000, null=True)
-    command = models.CharField(max_length=100)
-    directory = models.CharField(max_length=100)
-    interview = models.ForeignKey(Interview, on_delete=models.CASCADE)
+class InterviewTest(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, name="id", editable=False)
+    interview = models.ForeignKey(
+        to=Interview,
+        on_delete=models.CASCADE,
+    )
+    github_url = models.URLField(max_length=100)
+    test_command = models.CharField(max_length=100)
+    directory = models.CharField(max_length=200, blank=True)
+    setup_command = models.CharField(max_length=100, blank=True)
 
 
 class InterviewResult(models.Model):
     interview = models.ForeignKey(Interview, on_delete=models.CASCADE)
-    interviewee = models.ForeignKey("user.KuberUser", on_delete=models.CASCADE)
+    interviewee = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
+    submitted_at = models.DateTimeField(auto_now_add=True)
     result = models.BooleanField()

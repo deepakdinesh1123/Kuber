@@ -1,11 +1,11 @@
 import os
 
 import jwt
+from accounts.models import User
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
-from user.models import KuberUser
 
 
 class JWTAuthentication(BaseAuthentication):
@@ -22,12 +22,12 @@ class JWTAuthentication(BaseAuthentication):
             payload = jwt.decode(
                 token, os.getenv("JWT_SECRET_KEY"), algorithms=["HS256"]
             )
-            user = KuberUser.objects.get(id=payload["user_id"])
+            user = User.objects.get(id=payload["user_id"])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed("Token has expired.")
         except jwt.InvalidTokenError:
             raise AuthenticationFailed("Invalid token.")
-        except KuberUser.DoesNotExist:
+        except User.DoesNotExist:
             raise AuthenticationFailed("No user found for this token.")
 
         # Set the user object to request.user
@@ -56,12 +56,12 @@ class ResourceAccessAuthentication(BaseAuthentication):
             payload = jwt.decode(
                 token, os.getenv("JWT_SECRET_KEY"), algorithms=["HS256"]
             )
-            user = KuberUser.objects.get(id=payload["user_id"])
+            user = User.objects.get(id=payload["user_id"])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed("Token has expired.")
         except jwt.InvalidTokenError:
             raise AuthenticationFailed("Invalid token.")
-        except KuberUser.DoesNotExist:
+        except User.DoesNotExist:
             raise AuthenticationFailed("No user found for this token.")
 
         # Set the user object to request.user

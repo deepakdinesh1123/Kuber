@@ -1,6 +1,6 @@
+from accounts.serializers import CreatorSerializer
 from environment.models import DockerImage, Environment
 from rest_framework import serializers
-from user.serializers import CreatorSerializer
 
 
 class DockerEnvironmentSerializer(serializers.ModelSerializer):

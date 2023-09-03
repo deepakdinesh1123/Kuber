@@ -30,7 +30,7 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-class KuberUser(AbstractUser):
+class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid4, name="id", editable=False)
     username = models.CharField(max_length=100, unique=True, name="username")
     github_username = models.CharField(
@@ -45,24 +45,37 @@ class KuberUser(AbstractUser):
     is_superuser = models.BooleanField(default=False)
     objects = UserManager()
 
+    images = models.ManyToManyField("environment.DockerImage", blank=True)
+    envs = models.ManyToManyField("environment.Environment", blank=True)
+    sandboxes = models.ManyToManyField("environment.Sandbox", blank=True)
+
     USERNAME_FIELD = "username"
 
     def __str__(self):
         return self.username
 
 
-class Role(models.Model):
-    id = models.UUIDField(
-        primary_key=True, default=uuid4, name="role_id", editable=False
-    )
-    role_name = models.CharField(
-        max_length=20, editable=False, name="role_name", unique=True
-    )
-    permissions = models.JSONField(unique=True, editable=False)
+class Organization(TimeStampMixin):
+    id = models.UUIDField(primary_key=True, default=uuid4, name="id", editable=False)
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    images = models.ManyToManyField("environment.DockerImage", blank=True)
+    envs = models.ManyToManyField("environment.Environment", blank=True)
+    sandboxes = models.ManyToManyField("environment.Sandbox", blank=True)
+
+    def __str__(self):
+        return self.name
 
 
-# class Organization(TimeStampMixin):
-#     pass
+class Team(TimeStampMixin):
+    id = models.UUIDField(primary_key=True, default=uuid4, name="id", editable=False)
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    members = models.ManyToManyField(User, related_name="username", blank=True)
+    images = models.ManyToManyField("environment.DockerImage", blank=True)
+    envs = models.ManyToManyField("environment.Environment", blank=True)
+    sandboxes = models.ManyToManyField("environment.Sandbox", blank=True)
 
-# class Team(TimeStampMixin):
-#     pass
+    def __str__(self):
+        return self.name

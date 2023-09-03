@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from utils.logger import log_debug
 from utils.response import get_api_response
 
-from .models import KuberUser
+from .models import User
 
 
 class RegisterView(APIView):
@@ -38,8 +38,8 @@ class RegisterView(APIView):
         username = user_data.get("login")
         email = user_data.get("email")
 
-        # Create a new KuberUser instance
-        user = KuberUser(
+        # Create a new User instance
+        user = User(
             username=username,
             email=email,
             github_username=username,
