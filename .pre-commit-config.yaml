@@ -1,4 +1,4 @@
-exclude: "(rest/definitions|grpc-server/definitions|migrations/|ui/grpc-client|ui/pages/environments/index.js)"
+exclude: "(rest/definitions|grpc-server/definitions|migrations/|ui/grpc-client|ui/pages/environments/index.js|executor/tmp/main)"
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks

@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from accounts.views import RegisterView
 from django.contrib import admin
 from django.urls import include, path, re_path
 from drf_spectacular.views import (
@@ -24,7 +25,6 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
-from user.views import RegisterView
 
 VERSION = "(?<version>(v1|v2))/"
 PREFIX = "api/" + VERSION
@@ -33,7 +33,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     re_path("languages/", include("language_support.urls")),
     re_path("environments/", include("environment.urls")),
-    re_path("users/", include("user.urls")),
+    re_path("users/", include("accounts.urls")),
     re_path("images/", include("environment.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     # Optional UI:
