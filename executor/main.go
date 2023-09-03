@@ -14,6 +14,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/spf13/viper"
 )
 
 var upgrader = websocket.Upgrader{
@@ -95,6 +96,14 @@ func execute(c echo.Context) error {
 }
 
 func main() {
+
+	viper.SetConfigFile(".env")
+
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatalf("Check your environment variables")
+	}
+
 	e := echo.New()
 	e.Use(middleware.CORS())
 	e.Use(middleware.Logger())
