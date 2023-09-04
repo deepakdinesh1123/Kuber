@@ -45,37 +45,33 @@ class User(AbstractUser):
     is_superuser = models.BooleanField(default=False)
     objects = UserManager()
 
-    images = models.ManyToManyField("environment.DockerImage", blank=True)
-    envs = models.ManyToManyField("environment.Environment", blank=True)
-    sandboxes = models.ManyToManyField("environment.Sandbox", blank=True)
-
     USERNAME_FIELD = "username"
 
     def __str__(self):
         return self.username
 
 
-class Organization(TimeStampMixin):
-    id = models.UUIDField(primary_key=True, default=uuid4, name="id", editable=False)
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
-    images = models.ManyToManyField("environment.DockerImage", blank=True)
-    envs = models.ManyToManyField("environment.Environment", blank=True)
-    sandboxes = models.ManyToManyField("environment.Sandbox", blank=True)
+# class Organization(TimeStampMixin):
+#     id = models.UUIDField(primary_key=True, default=uuid4, name="id", editable=False)
+#     name = models.CharField(max_length=100)
+#     description = models.TextField(blank=True)
+#     # images = models.ManyToManyField("environment.DockerImage", blank=True)
+#     # envs = models.ManyToManyField("environment.Environment", blank=True)
+#     # sandboxes = models.ManyToManyField("environment.Sandbox", blank=True)
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name
 
 
-class Team(TimeStampMixin):
-    id = models.UUIDField(primary_key=True, default=uuid4, name="id", editable=False)
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    members = models.ManyToManyField(User, related_name="username", blank=True)
-    images = models.ManyToManyField("environment.DockerImage", blank=True)
-    envs = models.ManyToManyField("environment.Environment", blank=True)
-    sandboxes = models.ManyToManyField("environment.Sandbox", blank=True)
+# class Team(TimeStampMixin):
+#     id = models.UUIDField(primary_key=True, default=uuid4, name="id", editable=False)
+#     name = models.CharField(max_length=100)
+#     description = models.TextField(blank=True)
+#     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+#     members = models.ManyToManyField(User, related_name="username", blank=True)
+#     # images = models.ManyToManyField("environment.DockerImage", blank=True)
+#     # envs = models.ManyToManyField("environment.Environment", blank=True)
+#     # sandboxes = models.ManyToManyField("environment.Sandbox", blank=True)
 
-    def __str__(self):
-        return self.name
+#     def __str__(self):
+#         return self.name

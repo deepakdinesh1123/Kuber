@@ -20,9 +20,6 @@ class DockerImage(TimeStampMixin):
     name = models.CharField(max_length=100)
     Dockerfile = models.CharField(max_length=1000)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.UUIDField
-    content_object = GenericForeignKey()
     private = models.BooleanField(default=True)
 
 
@@ -54,14 +51,7 @@ class Sandbox(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     name = models.CharField(max_length=100, unique=True)
-    private = models.BooleanField(default=False)
+    private = models.BooleanField(default=True)
     containers = models.JSONField(
         default=dict, blank=True, null=True
     )  # names of the containers are filled by kuber
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["sandbox_creator", "env"], name="user_env_pk"
-            )
-        ]
