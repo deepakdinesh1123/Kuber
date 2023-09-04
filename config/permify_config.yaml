@@ -13,7 +13,6 @@ server:
 logger:
   level: info
 
-
 # The service section sets various service-level settings, including whether
 # or not to use a circuit breaker, and cache sizes for schema, permission,
 # and relationship data.
@@ -38,15 +37,9 @@ service:
 # and connection pool settings.
 database:
   engine: postgres
-  uri: postgres://root:root@localhost:5432/kuber
+  uri: postgres://root:root@postgres:5432/kuber
   auto_migrate: true
   max_open_connections: 20
   max_idle_connections: 1
   max_connection_lifetime: 300s
   max_connection_idle_time: 60s
-  garbage_collection:
-    enable: true
-    interval: 3m
-    timeout: 3m
-    window: 720h
-    number_of_threads: 1
