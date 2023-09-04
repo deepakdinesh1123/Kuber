@@ -14,8 +14,7 @@ type Sandbox struct {
 	Private          bool           `gorm:"column:private"`
 	Containers       datatypes.JSON `gorm:"column:containers"`
 	EnvID            uuid.UUID      `gorm:"column:env_id"`
-	SandboxCreatorID uuid.UUID      `gorm:"column:sandbox_creator_id"`
-	UserID           uuid.UUID      `gorm:"column:user_id"`
+	SandboxCreatorID uuid.UUID      `gorm:"column:creator_id"`
 }
 
 func (Sandbox) TableName() string {
@@ -28,4 +27,8 @@ func GetAllSandboxes() ([]Sandbox, error) {
 		return nil, err
 	}
 	return sandboxes, nil
+}
+
+func CreateNewSandbox() {
+
 }

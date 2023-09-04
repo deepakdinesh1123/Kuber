@@ -8,6 +8,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+// @Summary Create sandbox
+// @Description Creates a sandbox using the specified environment
+// @ID get-item-list
+// @Accept  json
+// @Produce  json
+// @Success 200
+// @Router /items [get]
 func CreateSandbox(c echo.Context) error {
 
 	type RequestBody struct {

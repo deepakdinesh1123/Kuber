@@ -1,0 +1,20 @@
+info:
+  contact: {}
+  description: This is the REST API for the executor
+  termsOfService: http://swagger.io/terms/
+  title: Executor API
+  version: 0.1.0
+paths:
+  /items:
+    get:
+      consumes:
+        - application/json
+      description: Creates a sandbox using the specified environment
+      operationId: get-item-list
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Create sandbox
+swagger: "2.0"
