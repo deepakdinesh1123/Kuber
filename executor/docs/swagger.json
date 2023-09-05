@@ -1,0 +1,132 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is the REST API for the executor",
+    "title": "Executor API",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {},
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/images": {
+      "post": {
+        "description": "Create a Docker image based on the provided parameters.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["Images"],
+        "summary": "Create an image",
+        "parameters": [
+          {
+            "description": "Name of the Docker image",
+            "name": "ImageName",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Tag for the Docker image",
+            "name": "Tag",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Content of the Dockerfile",
+            "name": "Dockerfile",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "{success: true, message: \"ImageName\"}",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "500": {
+            "description": "{success: false, message: \"Error\"}",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "/images/delete": {
+      "delete": {
+        "description": "Delete a Docker image by name and tag.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["Images"],
+        "summary": "Delete an image",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User ID",
+            "name": "UserID",
+            "in": "header",
+            "required": true
+          },
+          {
+            "description": "Name of the Docker image",
+            "name": "ImageName",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Tag for the Docker image",
+            "name": "Tag",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted the image",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        }
+      }
+    },
+    "/items": {
+      "get": {
+        "description": "Creates a sandbox using the specified environment",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "summary": "Create sandbox",
+        "operationId": "get-item-list",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  }
+}

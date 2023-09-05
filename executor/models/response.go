@@ -1,13 +1,13 @@
 package models
 
 type Response struct {
-	success bool
-	message string
+	Success bool   `json:"Success"`
+	Message string `json:"Message"`
 }
 
 func CreateResponse(success bool, message string) Response {
 	return Response{
-		success: success,
-		message: message,
+		Success: success,
+		Message: message,
 	}
 }

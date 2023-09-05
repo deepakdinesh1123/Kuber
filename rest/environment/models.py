@@ -55,3 +55,4 @@ class Sandbox(models.Model):
     containers = models.JSONField(
         default=dict, blank=True, null=True
     )  # names of the containers are filled by kuber
+    running = models.BooleanField(default=False)

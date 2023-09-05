@@ -7,14 +7,19 @@ import (
 	"net/http"
 	"time"
 
+	"executor/db"
 	"executor/docker"
 	"executor/routes"
+
+	_ "executor/docs"
+	"executor/middlewares"
 
 	"github.com/flynn/go-shlex"
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/spf13/viper"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 var upgrader = websocket.Upgrader{
@@ -95,6 +100,10 @@ func execute(c echo.Context) error {
 	}
 }
 
+// @title		Executor API
+// @version		0.1.0
+// @description	This is the REST API for the executor
+// @termsOfService	http://swagger.io/terms/
 func main() {
 
 	viper.SetConfigFile(".env")
@@ -104,11 +113,14 @@ func main() {
 		log.Fatalf("Check your environment variables")
 	}
 
+	db.Connect()
 	e := echo.New()
 	e.Use(middleware.CORS())
 	e.Use(middleware.Logger())
+	e.Use(middlewares.TokenMiddleware())
 	routes.RegisterImageRoutes(e)
 	routes.RegisterSandboxRoutes(e)
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 	e.GET("/ws", execute)
 	e.Logger.Fatal(e.Start(":1323"))
 }
