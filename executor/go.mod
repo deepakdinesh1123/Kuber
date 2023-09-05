@@ -15,6 +15,7 @@ require (
 	github.com/cli/safeexec v1.0.1 // indirect
 	github.com/cosmtrek/air v1.45.0 // indirect
 	github.com/creack/pty v1.1.18 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/flynn/go-shlex v0.0.0-20150515145356-3f9db97f8568 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
@@ -26,6 +27,8 @@ require (
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/gohugoio/hugo v0.118.2 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
+	github.com/golang-jwt/jwt/v5 v5.0.0 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect

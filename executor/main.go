@@ -7,10 +7,12 @@ import (
 	"net/http"
 	"time"
 
+	"executor/db"
 	"executor/docker"
 	"executor/routes"
 
 	_ "executor/docs"
+	"executor/middlewares"
 
 	"github.com/flynn/go-shlex"
 	"github.com/gorilla/websocket"
@@ -111,9 +113,11 @@ func main() {
 		log.Fatalf("Check your environment variables")
 	}
 
+	db.Connect()
 	e := echo.New()
 	e.Use(middleware.CORS())
 	e.Use(middleware.Logger())
+	e.Use(middlewares.TokenMiddleware())
 	routes.RegisterImageRoutes(e)
 	routes.RegisterSandboxRoutes(e)
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
