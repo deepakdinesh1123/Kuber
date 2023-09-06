@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "accounts",
     "environment",
     "language_support",
+    "interview",
     "drf_spectacular",
 ]
 

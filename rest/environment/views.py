@@ -1,7 +1,7 @@
 import json
 import os
 import traceback
-
+from django.shortcuts import get_object_or_404
 import requests
 from accounts.authentication import (
     JWTAuthentication,
@@ -16,14 +16,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from utils.logger import log_debug, log_error, log_info
 from utils.response import get_api_response
-
-from .forms import EnvironmentForm, generate_json_schema
-from .models import DockerImage, Environment, Sandbox
+from .forms import EnvForm
+from .models import DockerImage, Environment, Sandbox, ENVIRONMENT_CHOICES
 from .serializers import (
     DockerEnvironmentSerializer,
     DockerFileSerializer,
     DockerImageSerializer,
     SandboxSerializer,
+    EnvironmentSerializer
 )
 
 # Create your views here.
@@ -65,25 +65,40 @@ class EnvironmentView(APIView):
                 return get_api_response(str(e), status=400, success=False)
             return get_api_response(serializer.data, status=200, success=True)
 
-    def post(self, request: Request, action: str, *args, **kwargs) -> Response:
-        user = request.user
-        data = request.data
-        if action == "create":
+    def post(self, request: Request, *args, **kwargs) -> Response:
+        try:
+            config_data = request.data.get("config", "")
+
+            if not config_data.startswith("{") and not config_data.endswith("}"):
+                config_data = "{" + config_data + "}"
+
             try:
-                private = data.get("private", False)
-                env = Environment(
-                    env_name=data["name"],
-                    config=data["config"],
-                    images=data["images"],
-                    creator=user,
-                    private=private,
-                    type=data["type"],
-                )
-                env.save()
+                config_dict = json.loads(config_data)
+            except json.JSONDecodeError as e:
+                return get_api_response("Invalid config format", status=400, success=False)
+
+            request.data["config"] = config_dict
+            request.data["creator"] = request.user.id
+            serializer = EnvironmentSerializer(data=request.data)
+
+            if serializer.is_valid():
+                serializer.save()
                 return get_api_response("Environment created", status=200, success=True)
+            else:
+                return get_api_response(serializer.errors, status=400, success=False)
+        except Exception as e:
+            return get_api_response(str(e), status=500, success=False)
+
+    def delete(self, request: Request, env_id=None, *args, **kwargs) -> Response:
+        if env_id:
+            try:
+                env = get_object_or_404(Environment, env_id=env_id)
+                env.delete()
+                return get_api_response("Environment deleted", status=204, success=True)
             except Exception as e:
-                log_error(traceback.format_exc())
-                return get_api_response(str(e), status=400, success=False)
+                return get_api_response(str(e), status=500, success=False)
+        else:
+            return get_api_response("env_id parameter is required", status=400, success=False)
 
     def get_authenticators(self):
         if self.request.method == "POST":
@@ -119,12 +134,24 @@ class SandboxView(APIView):
             return get_api_response(str(e), status=500, success=False)
 
 
-@api_view(("GET",))
-@authentication_classes((JWTAuthentication,))
-def json_schema_view(request: Request, *args, **kwargs) -> Response:
-    json_schema = generate_json_schema(EnvironmentForm)
-    log_debug(json_schema)
-    return get_api_response(json_schema, status=200, success=True)
+class FormView(APIView):
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request: Request, *args, **kwargs) -> Response:
+        user = request.user
+        user_images = DockerImage.objects.filter(created_by=user)
+        types = dict(ENVIRONMENT_CHOICES)
+        args_list = {
+            'image': {
+                str(image.id): image.name for image in user_images
+            },
+            'type': types
+
+
+        }
+        form = EnvForm()
+        json_schema = form.generate_json_schema(args_list=args_list)
+        return get_api_response(json_schema, status=200, success=True)
 
 
 @api_view(("POST",))

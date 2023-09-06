@@ -1,10 +1,12 @@
 from core.forms import JsonSchemaForm
-from .models import Environment
+from .models import Interview
 
 
-class EnvForm(JsonSchemaForm):
-    def generate_json_schema(self, args_list):
+class InterForm(JsonSchemaForm):
+
+    def generate_json_schema(self, args_list=None):
         json_schema = super().generate_json_schema()
+        # print(args_list)
         key_val = None
         if args_list:
             print(args_list)
@@ -23,5 +25,5 @@ class EnvForm(JsonSchemaForm):
         return json_schema
 
     class Meta:
-        model = Environment
-        fields = ["env_name", "image", "config", "type", "private"]
+        model = Interview
+        fields = ["environment", "config", "time_limit"]
