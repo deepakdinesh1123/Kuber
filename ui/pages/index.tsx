@@ -10,7 +10,7 @@ const SignupWithGitHub: React.FC = () => {
 
   useEffect(() => {
     if (getCookie("access_token")) {
-      router.push("/environments/dashboard");
+      router.push("/dashboard");
       console.log(getCookie("access_token"));
     }
   });

@@ -1,6 +1,12 @@
 from accounts.serializers import CreatorSerializer
-from environment.models import DockerImage, Environment
+from environment.models import DockerImage, Environment, Sandbox
 from rest_framework import serializers
+
+
+class EnvironmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Environment
+        fields = "__all__"
 
 
 class DockerEnvironmentSerializer(serializers.ModelSerializer):
@@ -25,3 +31,9 @@ class DockerFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = DockerImage
         fields = ["id", "name", "created_by", "Dockerfile"]
+
+
+class SandboxSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sandbox
+        fields = ["name", "sandbox_creator", "user", "containers", "env"]
