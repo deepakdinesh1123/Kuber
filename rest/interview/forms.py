@@ -1,9 +1,9 @@
 from core.forms import JsonSchemaForm
+
 from .models import Interview
 
 
 class InterForm(JsonSchemaForm):
-
     def generate_json_schema(self, args_list=None):
         json_schema = super().generate_json_schema()
         # print(args_list)
@@ -16,7 +16,7 @@ class InterForm(JsonSchemaForm):
                         "title": key.capitalize(),
                         "type": "string",
                         "enumNames": list(value.values()),
-                        "enum": list(value.keys())
+                        "enum": list(value.keys()),
                     }
 
                 # print(modification)

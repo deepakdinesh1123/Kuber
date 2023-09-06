@@ -1,13 +1,14 @@
 import json
 import os
 import traceback
-from django.shortcuts import get_object_or_404
+
 import requests
 from accounts.authentication import (
     JWTAuthentication,
     ResourceAccessAuthentication,
 )
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
@@ -16,14 +17,15 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from utils.logger import log_debug, log_error, log_info
 from utils.response import get_api_response
+
 from .forms import EnvForm
-from .models import DockerImage, Environment, Sandbox, ENVIRONMENT_CHOICES
+from .models import ENVIRONMENT_CHOICES, DockerImage, Environment, Sandbox
 from .serializers import (
     DockerEnvironmentSerializer,
     DockerFileSerializer,
     DockerImageSerializer,
+    EnvironmentSerializer,
     SandboxSerializer,
-    EnvironmentSerializer
 )
 
 # Create your views here.
@@ -75,7 +77,9 @@ class EnvironmentView(APIView):
             try:
                 config_dict = json.loads(config_data)
             except json.JSONDecodeError as e:
-                return get_api_response("Invalid config format", status=400, success=False)
+                return get_api_response(
+                    "Invalid config format", status=400, success=False
+                )
 
             request.data["config"] = config_dict
             request.data["creator"] = request.user.id
@@ -98,7 +102,9 @@ class EnvironmentView(APIView):
             except Exception as e:
                 return get_api_response(str(e), status=500, success=False)
         else:
-            return get_api_response("env_id parameter is required", status=400, success=False)
+            return get_api_response(
+                "env_id parameter is required", status=400, success=False
+            )
 
     def get_authenticators(self):
         if self.request.method == "POST":
@@ -142,12 +148,8 @@ class FormView(APIView):
         user_images = DockerImage.objects.filter(created_by=user)
         types = dict(ENVIRONMENT_CHOICES)
         args_list = {
-            'image': {
-                str(image.id): image.name for image in user_images
-            },
-            'type': types
-
-
+            "image": {str(image.id): image.name for image in user_images},
+            "type": types,
         }
         form = EnvForm()
         json_schema = form.generate_json_schema(args_list=args_list)

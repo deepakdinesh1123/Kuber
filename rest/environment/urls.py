@@ -1,9 +1,9 @@
 from django.urls import re_path
 from environment.views import (
     EnvironmentView,
+    FormView,
     Machine,
     SandboxView,
-    FormView,
     create_image,
     get_all_images,
     get_image,
@@ -39,5 +39,4 @@ urlpatterns = [
     re_path("image/build", create_image, name="build_image"),
     re_path(r"image/(?P<image_id>\d+)/$", get_image, name="get_image"),
     # re_path("", get_all_images, name="get_all_images"),
-
 ]

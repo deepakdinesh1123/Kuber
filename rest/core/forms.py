@@ -1,16 +1,13 @@
-from django import forms
 import json
+
+from django import forms
 
 
 class JsonSchemaForm(forms.ModelForm):
     def generate_json_schema(self):
         fields = self.fields
 
-        json_schema = {
-            "type": "object",
-            "required": [],
-            "properties": {}
-        }
+        json_schema = {"type": "object", "required": [], "properties": {}}
 
         for field_name, field in fields.items():
             json_property = {
@@ -26,14 +23,8 @@ class JsonSchemaForm(forms.ModelForm):
                 if isinstance(field, forms.BooleanField):
                     json_property["type"] = "boolean"
                     json_property["oneOf"] = [
-                        {
-                            "title": "Enable",
-                            "const": True
-                        },
-                        {
-                            "title": "Disable",
-                            "const": False
-                        }
+                        {"title": "Enable", "const": True},
+                        {"title": "Disable", "const": False},
                     ]
                 else:
                     json_property["type"] = "string"

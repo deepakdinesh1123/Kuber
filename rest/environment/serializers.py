@@ -4,10 +4,9 @@ from rest_framework import serializers
 
 
 class EnvironmentSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Environment
-        fields = '__all__'
+        fields = "__all__"
 
 
 class DockerEnvironmentSerializer(serializers.ModelSerializer):
@@ -35,7 +34,6 @@ class DockerFileSerializer(serializers.ModelSerializer):
 
 
 class SandboxSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Sandbox
         fields = ["name", "sandbox_creator", "user", "containers", "env"]

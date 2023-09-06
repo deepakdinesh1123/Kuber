@@ -1,4 +1,5 @@
 from core.forms import JsonSchemaForm
+
 from .models import Environment
 
 
@@ -14,7 +15,7 @@ class EnvForm(JsonSchemaForm):
                         "title": key.capitalize(),
                         "type": "string",
                         "enumNames": list(value.values()),
-                        "enum": list(value.keys())
+                        "enum": list(value.keys()),
                     }
 
                 # print(modification)
