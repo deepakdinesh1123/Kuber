@@ -284,3 +284,5 @@ cython_debug/
 .vscode/
 
 data.json
+
+/executor/tmp

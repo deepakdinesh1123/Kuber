@@ -6,7 +6,7 @@ from utils.mixins.model_mixins import TimeStampMixin
 # Create your models here.
 
 
-def default_config(self):
+def default_config():
     return {
         "Terminal": True,
         "FileExplorer": True,

@@ -35,6 +35,7 @@ urlpatterns = [
     re_path("environments/", include("environment.urls")),
     re_path("users/", include("accounts.urls")),
     re_path("images/", include("environment.urls")),
+    re_path("interviews/", include("interview.urls")),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     # Optional UI:
     path(

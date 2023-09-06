@@ -1,5 +1,6 @@
 import os
 import re
+import subprocess
 import sys
 
 import jwt
@@ -31,7 +32,32 @@ JvsDT7xX2lgX35Mywd22MXvFFhiEBwIgCcJcE62EBT7jE7sGLdYK4xWDWl0WY4iH
     return token
 
 
+def remove_images_with_prefix(prefix):
+    try:
+        # Get a list of Docker images and their information
+        images_info = subprocess.check_output(
+            ["docker", "images", "--format", "{{.Repository}}:{{.Tag}}"]
+        )
+
+        # Split the output into lines
+        image_lines = images_info.decode().strip().split("\n")
+
+        # Iterate through the image lines
+        for line in image_lines:
+            image_name, image_tag = line.split(":")
+
+            # Check if the image name starts with the specified prefix
+            if image_name.startswith(prefix):
+                # Remove the image
+                subprocess.call(["docker", "rmi", f"{image_name}:{image_tag}"])
+
+        print(f"Removed Docker images with prefix: {prefix}")
+    except subprocess.CalledProcessError as e:
+        print(f"Error: {e}")
+
+
 if __name__ == "__main__":
     # action = sys.argv[1]
-    remove_migrations()
+    # remove_migrations()
     # print(generate_jwt("49438dd1-c87b-4d7e-a9db-a1d93e72554c"))
+    remove_images_with_prefix("kuber-test")
