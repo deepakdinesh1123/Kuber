@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"executor/db"
 	"executor/docker"
 	"fmt"
 	"net/http"
@@ -17,12 +18,14 @@ import (
 // @Router /items [get]
 func CreateSandbox(c echo.Context) error {
 
+	userID := c.Request().Context().Value("UserID").(string)
 	type RequestBody struct {
-		SandboxName     string `json:"SandboxName"`
-		SandboxType     string `json:"SandboxType"`
-		ProjectName     string `json:"ProjectName"`
-		ImageName       string `json:"ImageName"`
-		EnvironmentName string `json:"EnvironmentName"`
+		SandboxName   string `json:"SandboxName"`
+		SandboxType   string `json:"SandboxType"`
+		ProjectName   string `json:"ProjectName"`
+		ImageName     string `json:"ImageName"`
+		EnvironmentID string `json:"EnvironmentID"`
+		Private       bool   `json:"Private"`
 	}
 
 	requestBody := new(RequestBody)
@@ -35,13 +38,15 @@ func CreateSandbox(c echo.Context) error {
 
 	sandboxconfig := docker.NewSandboxConfig(containerConfig)
 
-	sandbox := docker.NewSandbox(requestBody.SandboxName, requestBody.SandboxType, requestBody.ProjectName, requestBody.EnvironmentName, requestBody.ImageName, sandboxconfig)
+	sandbox := docker.NewSandbox(requestBody.SandboxName, requestBody.SandboxType, requestBody.ProjectName, requestBody.EnvironmentID, requestBody.ImageName, sandboxconfig)
 
 	container, err := sandbox.CreateSandbox()
 
 	if err != nil {
 		return c.String(http.StatusInternalServerError, "Could not create sandbx")
 	}
+
+	err = db.CreateNewSandbox(requestBody.Private, requestBody.EnvironmentID, userID, requestBody.SandboxName, "{}")
 
 	return c.String(http.StatusOK, fmt.Sprintf("container: %s", container.ContainerName))
 

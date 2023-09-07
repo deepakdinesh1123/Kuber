@@ -59,5 +59,5 @@ def remove_images_with_prefix(prefix):
 if __name__ == "__main__":
     # action = sys.argv[1]
     # remove_migrations()
-    # print(generate_jwt("49438dd1-c87b-4d7e-a9db-a1d93e72554c"))
+    print(generate_jwt("131f1f1e-129e-450f-9196-cb427834e7ff"))
     remove_images_with_prefix("kuber-test")

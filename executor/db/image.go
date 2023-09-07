@@ -20,10 +20,10 @@ func (Image) TableName() string {
 	return "environment_dockerimage"
 }
 
-func CreateNewImage(imageName, dockerfile, userID string) (string, error) {
+func CreateNewImage(imageName, dockerfile, userID string) error {
 	userUUID, err := uuid.Parse(userID)
 	if err != nil {
-		return "", err
+		return err
 	}
 	image := Image{ID: uuid.New(), Name: imageName, Dockerfile: dockerfile, CreatedBy: userUUID}
 	image.CreatedAt = time.Now()
@@ -31,7 +31,7 @@ func CreateNewImage(imageName, dockerfile, userID string) (string, error) {
 	image.Private = true
 	res := Postgres.DB.Create(&image)
 	if res.Error != nil {
-		return "", res.Error
+		return res.Error
 	}
-	return "Inserted", nil
+	return nil
 }

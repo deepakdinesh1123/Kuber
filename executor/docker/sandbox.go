@@ -2,8 +2,10 @@ package docker
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/goombaio/namegenerator"
 )
 
 type SandboxConfig struct {
@@ -12,13 +14,13 @@ type SandboxConfig struct {
 }
 
 type Sandbox struct {
-	SandboxID       string
-	SandboxName     string
-	SandboxConfig   SandboxConfig
-	SandboxType     string
-	ProjectName     string
-	ImageName       string
-	EnvironmentName string
+	SandboxID     string
+	SandboxName   string
+	SandboxConfig SandboxConfig
+	SandboxType   string
+	ProjectName   string
+	ImageName     string
+	environmentID string
 }
 
 func NewSandboxConfig(contConfig ContainerConfig) SandboxConfig {
@@ -27,16 +29,16 @@ func NewSandboxConfig(contConfig ContainerConfig) SandboxConfig {
 	}
 }
 
-func NewSandbox(sandboxName, sandboxType, projectName, environmentName, imageName string, config SandboxConfig) Sandbox {
+func NewSandbox(sandboxName, sandboxType, projectName, environmentID, imageName string, config SandboxConfig) Sandbox {
 	sandboxId := uuid.NewString()
 	return Sandbox{
-		SandboxID:       sandboxId,
-		SandboxName:     sandboxName,
-		SandboxConfig:   config,
-		SandboxType:     sandboxType,
-		ProjectName:     projectName,
-		ImageName:       imageName,
-		EnvironmentName: environmentName,
+		SandboxID:     sandboxId,
+		SandboxName:   sandboxName,
+		SandboxConfig: config,
+		SandboxType:   sandboxType,
+		ProjectName:   projectName,
+		ImageName:     imageName,
+		environmentID: environmentID,
 	}
 }
 
@@ -44,11 +46,14 @@ func (s *Sandbox) CreateSandbox() (*Container, error) {
 	if s.SandboxType == "compose" {
 		// Support for compose will be added later
 	} else {
-		container := NewContainer(fmt.Sprintf("%s-%s-%s", s.EnvironmentName, s.SandboxName, s.SandboxID), s.ImageName, s.SandboxConfig.ContConfig)
+		seed := time.Now().UTC().UnixNano()
+		containerName := namegenerator.NewNameGenerator(seed).Generate()
+		container := NewContainer(fmt.Sprintf(containerName, s.environmentID, s.SandboxName, s.SandboxID), s.ImageName, s.SandboxConfig.ContConfig)
 		out, err := container.CreateContainer()
 		if err != nil {
 			return nil, err
 		}
+
 		fmt.Println(out)
 
 		return container, nil

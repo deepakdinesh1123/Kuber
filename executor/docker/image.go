@@ -26,7 +26,7 @@ func BuildImage(imageName, tag, dockerfile, userID string) (string, string, erro
 		}
 
 		log.Debug().Str("Image", "ct")
-		_, err = db.CreateNewImage(imgNameWithId, dockerfile, userID)
+		err = db.CreateNewImage(imgNameWithId, dockerfile, userID)
 		if err != nil {
 			return "", "", err
 		}

@@ -5,6 +5,8 @@ import (
 	"os/exec"
 
 	"executor/models"
+
+	"github.com/rs/zerolog/log"
 )
 
 type ContainerConfig struct {
@@ -52,10 +54,9 @@ func ExistingContainer(ContainerName string) *Container {
 }
 
 func (c *Container) CreateContainer() (string, error) {
-	cmdArgs := []string{"run", "--name=" + c.ContainerName, "-d", "-t"}
-	cmdArgs = append(cmdArgs, c.ImageName)
+	log.Debug().Msg(c.ImageName)
 
-	cmd := exec.Command("docker", cmdArgs...)
+	cmd := exec.Command("docker", "run", fmt.Sprintf("--name=%s", c.ContainerName), "-d", "-t", c.ImageName)
 	cmd.Stdout = nil
 	cmd.Stderr = nil
 	if err := cmd.Run(); err != nil {

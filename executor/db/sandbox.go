@@ -7,14 +7,19 @@ import (
 	"gorm.io/datatypes"
 )
 
+type Containers struct {
+	Containers []string `json:"containers"`
+}
+
 type Sandbox struct {
-	ID               int            `gorm:"column:id"`
-	CreatedAt        time.Time      `gorm:"column:created_at"`
-	Name             string         `gorm:"column:name"`
-	Private          bool           `gorm:"column:private"`
-	Containers       datatypes.JSON `gorm:"column:containers"`
-	EnvID            uuid.UUID      `gorm:"column:env_id"`
-	SandboxCreatorID uuid.UUID      `gorm:"column:creator_id"`
+	ID         uuid.UUID      `gorm:"column:id"`
+	CreatedAt  time.Time      `gorm:"column:created_at"`
+	Name       string         `gorm:"column:name"`
+	Private    bool           `gorm:"column:private"`
+	Containers datatypes.JSON `gorm:"column:containers"`
+	EnvID      uuid.UUID      `gorm:"column:env_id"`
+	CreatorID  uuid.UUID      `gorm:"column:creator_id"`
+	Running    bool           `gorm:"column:running"`
 }
 
 func (Sandbox) TableName() string {
@@ -29,6 +34,20 @@ func GetAllSandboxes() ([]Sandbox, error) {
 	return sandboxes, nil
 }
 
-func CreateNewSandbox() {
-
+func CreateNewSandbox(private bool, EnvID, creatorID, Name, containers string) error {
+	envUUID, err := uuid.Parse(EnvID)
+	if err != nil {
+		return err
+	}
+	creatorUUID, err := uuid.Parse(creatorID)
+	if err != nil {
+		return err
+	}
+	sandbox := Sandbox{ID: uuid.New(), CreatedAt: time.Now(), Private: private, EnvID: envUUID, CreatorID: creatorUUID, Running: true}
+	sandbox.Containers = datatypes.JSON([]byte(containers))
+	res := Postgres.DB.Create(&sandbox)
+	if res.Error != nil {
+		return res.Error
+	}
+	return nil
 }

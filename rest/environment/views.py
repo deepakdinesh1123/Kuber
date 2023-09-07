@@ -109,7 +109,6 @@ class SandboxView(APIView):
 @api_view(("POST",))
 @authentication_classes((JWTAuthentication,))
 def create_image(request: Request, *args, **kwargs) -> Request:
-    user = request.user
     data = request.data
 
     url = f"{os.getenv('EXECUTOR_API_HOST')}/image/build"
@@ -121,15 +120,15 @@ def create_image(request: Request, *args, **kwargs) -> Request:
             "Tag": data["Tag"],
         }
     )
-    headers = {"Content-Type": "application/json"}
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": request.headers.get("Authorization"),
+    }
 
     response = requests.request("POST", url, headers=headers, data=payload)
     if response.status_code != 200:
         return get_api_response("Could not create image", 500, False)
-    resp_data = response.json()
-    DockerImage.objects.create(
-        name=resp_data["ImageName"], created_by=user, Dockerfile=data["Dockerfile"]
-    )
+    # resp_data = response.json()
     return get_api_response("Image created", 200, True)
 
 
