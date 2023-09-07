@@ -21,7 +21,7 @@ urlpatterns = [
         name="getEnvironment",
     ),
     re_path(
-        r"environment/",
+        r"environment",
         EnvironmentView.as_view(),
         name="environment-api",
     ),

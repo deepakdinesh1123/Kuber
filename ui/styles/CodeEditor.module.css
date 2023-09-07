@@ -1,0 +1,16 @@
+/* CodeEditor.module.css */
+.MonacoEditor {
+  flex: 1;
+  overflow-y: auto;
+  margin: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background-color: #1e1e1e;
+}
+
+.MonacoEditor h1 {
+  font-size: 18px;
+  padding: 10px;
+  margin: 0;
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+}

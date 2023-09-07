@@ -1,0 +1,33 @@
+/* IDE.module.css */
+
+/* Main IDE container */
+.ide-container {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100vh;
+  background-color: black;
+}
+
+/* Editor section */
+.editor-section {
+  flex: 1;
+  overflow-y: auto;
+  /* margin: 10px; */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background-color: #1e1e1e;
+}
+
+/* Terminal section */
+.terminal-section {
+  position: relative;
+  height: 30%;
+  overflow-y: auto;
+  /* margin: 10px; */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Terminal title */
+.terminal-section h4 {
+  margin-bottom: 1px;
+}

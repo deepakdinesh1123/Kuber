@@ -21,9 +21,22 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerView,
 )
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
+)
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Quber",
+        default_version="v1",
+        description="Quber REST API",
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
 )
 
 VERSION = "(?<version>(v1|v2))/"
@@ -48,4 +61,5 @@ urlpatterns = [
         SpectacularRedocView.as_view(url_name="schema"),
         name="redoc",
     ),
+    # path("api/schema/swagger-ui/", schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 ]

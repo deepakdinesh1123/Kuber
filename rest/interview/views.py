@@ -9,6 +9,7 @@ from accounts.authentication import (
 )
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
+from drf_yasg import openapi
 from environment.models import Environment
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
@@ -27,6 +28,7 @@ from .serializers import InterviewSerializer
 
 
 class InterviewView(APIView):
+    serializer_class = InterviewSerializer
     authentication_classes = [JWTAuthentication]
 
     def post(self, request: Request, *args, **kwargs) -> Response:
@@ -89,6 +91,7 @@ class InterviewView(APIView):
 
 
 class FormView(APIView):
+    # serializer_class = InterviewSerializer
     authentication_classes = [JWTAuthentication]
 
     def get(self, request: Request, *args, **kwargs) -> Response:

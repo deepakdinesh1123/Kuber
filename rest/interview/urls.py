@@ -8,5 +8,10 @@ urlpatterns = [
         InterviewView.as_view(),
         name="interview-api",
     ),
-    re_path("forms/", FormView.as_view(), name="forms-api"),
+    re_path(
+        r"interview",
+        InterviewView.as_view(),
+        name="post-interview-api",
+    ),
+    re_path("forms", FormView.as_view(), name="forms-api"),
 ]

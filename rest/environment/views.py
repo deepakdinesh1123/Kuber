@@ -51,6 +51,8 @@ class DockerRegistry(APIView):
 
 
 class EnvironmentView(APIView):
+    serializer_class = EnvironmentSerializer
+
     def get(self, request: Request, env_id=None, *args, **kwargs) -> Response:
         if env_id:
             try:

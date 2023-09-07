@@ -1,69 +1,77 @@
-import React, { useEffect } from "react";
-import { Terminal } from "xterm";
-import { FitAddon } from "xterm-addon-fit";
-import { WebLinksAddon } from "xterm-addon-web-links";
-
+import React, { useEffect, useRef, useState } from "react";
 import "xterm/css/xterm.css";
 
-let term;
+const XtermComponent = () => {
+  const terminalRef = useRef(null);
+  let terminal;
+  const [allowInput, setAllowInput] = useState(true);
 
-const fitAddon = new FitAddon();
-
-export default function XTerminal(props) {
-  const openInitTerminal = () => {
-    const terminalContainer = document.getElementById("xterm");
-    while (terminalContainer.children.length) {
-      terminalContainer.removeChild(terminalContainer.children[0]);
-    }
-
-    const isWindows =
-      ["Windows", "Win16", "Win32", "WinCE"].indexOf(navigator.platform) >= 0;
-    term = new Terminal({
-      windowsMode: isWindows,
-      convertEol: true,
-      fontFamily: `'Fira Mono', monospace`,
-      fontSize: 16,
-      fontWeight: 400,
-      rendererType: "canvas",
-    });
-
-    term.loadAddon(fitAddon);
-    const webLinksAddon = new WebLinksAddon();
-    term.loadAddon(webLinksAddon);
-
-    term.open(terminalContainer);
-
-    term.element.style.padding = "20px";
-
-    fitAddon.fit();
-    term.focus();
-    term.write("$");
-
-    term.onKey((key) => {
-      const char = key.domEvent.key;
-      if (char === "Enter") {
-        props.onKeyDown("Enter", term);
-      } else if (char === "Backspace") {
-        props.onKeyDown("Backspace", term);
-        term.write("\b \b");
-      } else {
-        props.onKeyDown(char, term);
-        term.write(char);
-      }
-    });
-  };
-
-  const windowChange = () => {
-    fitAddon.fit();
-  };
   useEffect(() => {
-    openInitTerminal();
-    window.addEventListener("resize", windowChange);
+    // Use dynamic imports to load Xterm.js packages
+    import("xterm").then((xterm) => {
+      import("xterm-addon-fit").then((fitAddon) => {
+        const { Terminal } = xterm;
+        const { FitAddon } = fitAddon;
+
+        terminal = new Terminal();
+        const fitAddonInstance = new FitAddon();
+        terminal.loadAddon(fitAddonInstance);
+
+        terminal.open(terminalRef.current);
+        fitAddonInstance.fit();
+
+        const promptString = "$ ";
+        let currentInput = "";
+
+        terminal.onData((data) => {
+          if (!allowInput) {
+            return;
+          }
+
+          if (data === "\x7f") {
+            if (currentInput.length > 0) {
+              currentInput = currentInput.slice(0, -1);
+              terminal.write("\b \b");
+            }
+          } else {
+            terminal.write(data);
+
+            if (data !== "\r") {
+              currentInput += data;
+            } else {
+              handleCommand(currentInput.trim());
+              currentInput = "";
+              terminal.write("\r\n" + promptString);
+            }
+          }
+        });
+
+        terminal.write(promptString);
+
+        return () => {
+          terminal.dispose();
+        };
+      });
+    });
   }, []);
 
-  return (
-    <div className="freeaiterm-wrap">
-      <div id="xterm" style={{ height: "350px", width: "100%" }} />
-    </div>
-  );
-}
+  const handleCommand = (command) => {
+    if (command.startsWith("echo ")) {
+      const textToEcho = command.slice(5);
+      terminal.write("\r\n" + textToEcho);
+    } else if (command === "clear") {
+      terminal.clear();
+    }
+
+    setAllowInput(false);
+
+    const disableInputDuration = 1000;
+    setTimeout(() => {
+      setAllowInput(true);
+    }, disableInputDuration);
+  };
+
+  return <div ref={terminalRef} style={{ height: "100vh" }} />;
+};
+
+export default XtermComponent;

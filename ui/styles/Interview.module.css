@@ -1,0 +1,62 @@
+/* Interview.css */
+
+.interview-container {
+  position: relative;
+}
+
+.top-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 10px;
+  z-index: 1;
+}
+
+.problem-statement {
+  /* Styles for the problem statement, adjust as needed */
+  margin-top: 10px;
+  z-index: 1;
+}
+.timer-display {
+  font-size: 18px; /* Adjust the font size as needed */
+  font-weight: bold; /* Make the timer text bold */
+  color: #ff0000; /* Set the color to red (adjust as needed) */
+  margin-right: 20px; /* Add some spacing between the timer and buttons */
+}
+
+/* Styles for the modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  max-width: 600px;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+}
+
+.modal-content {
+  margin-top: 20px;
+}

@@ -37,7 +37,7 @@ const SignupWithGitHub: React.FC = () => {
       const response = await handleGithubAuthRequest(request);
       const jwt_token = response.data;
       setCookie("access_token", jwt_token);
-      router.push("/environments/dashboard");
+      router.push("/dashboard");
     } catch (error) {
       console.error("Error:", error);
     }

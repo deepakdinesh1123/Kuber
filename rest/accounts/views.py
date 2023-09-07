@@ -15,8 +15,8 @@ from .models import User
 
 class RegisterView(APIView):
     def post(self, request, *args, **kwargs):
-        vault_client = hvac.Client(url=os.getenv("VAULT_URL"))
-        vault_token = os.getenv("VAULT_TOKEN")
+        # vault_client = hvac.Client(url=os.getenv("VAULT_URL"))
+        # vault_token = os.getenv("VAULT_TOKEN")
 
         code = request.data.get("code")
         if not code:
@@ -60,9 +60,9 @@ class RegisterView(APIView):
         log_debug(f"token {jwt_token}")
 
         # Send user UUID and access token to HashiCorp Vault
-        self.send_to_hashicorp_vault(
-            vault_client, vault_token, user_uuid, access_token, username
-        )
+        # self.send_to_hashicorp_vault(
+        #     vault_client, vault_token, user_uuid, access_token, username
+        # )
 
         response = get_api_response(jwt_token, status=200, success=True)
         return response
