@@ -57,10 +57,21 @@ export default function CreateEnvironment() {
     }
   };
 
+  const uiSchema = {
+    config: {
+      "ui:widget": "textarea",
+    },
+  };
+
   return (
     <div className="form-container">
       {schema && (
-        <Form schema={schema} validator={validator} onSubmit={onSubmit} />
+        <Form
+          schema={schema}
+          validator={validator}
+          onSubmit={onSubmit}
+          uiSchema={uiSchema}
+        />
       )}
     </div>
   );

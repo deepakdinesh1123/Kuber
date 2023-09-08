@@ -47,7 +47,8 @@ class InterviewView(APIView):
 
             if config_data:
                 request.data["config"] = config_dict
-            request.data["config"] = default_config()
+            else:
+                request.data["config"] = default_config()
             request.data["creator"] = request.user.id
 
             serializer = InterviewSerializer(data=request.data)

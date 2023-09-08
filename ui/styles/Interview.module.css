@@ -36,6 +36,13 @@
   justify-content: center;
   align-items: center;
 }
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
 
 .modal {
   background: #fff;
@@ -55,6 +62,7 @@
   cursor: pointer;
   font-size: 16px;
   color: #333;
+  z-index: 1;
 }
 
 .modal-content {

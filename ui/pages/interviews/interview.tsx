@@ -61,14 +61,16 @@ function Interview() {
       {showProblemStatement && (
         <div className={styles["modal-overlay"]}>
           <div className={styles["modal"]}>
-            <button
-              onClick={toggleProblemStatement}
-              className={styles["close-button"]}
-            >
-              Close
-            </button>
-            <div className={styles["modal-content"]}>
+            <div className={styles["modal-header"]}>
               <h2>Problem Statement</h2>
+              <button
+                onClick={toggleProblemStatement}
+                className={styles["close-button"]}
+              >
+                Close
+              </button>
+            </div>
+            <div className={styles["modal-content"]}>
               <p>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. ...
               </p>
