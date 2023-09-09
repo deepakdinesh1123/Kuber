@@ -132,5 +132,26 @@ func CreateFile(c echo.Context) error {
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 	}
+	return c.String(http.StatusOK, fmt.Sprintf("File Deleted\nout: %s", out))
+}
+
+func DeleteFile(c echo.Context) error {
+
+	type RequestBody struct {
+		ContainerName string `json:"ContainerName"`
+		FilePath      string `json:"FilePath"`
+	}
+
+	requestBody := new(RequestBody)
+
+	if err := c.Bind(requestBody); err != nil {
+		return err
+	}
+
+	container := docker.ExistingContainer(requestBody.ContainerName)
+	out, err := container.DeleteFile(requestBody.FilePath)
+	if err != nil {
+		c.String(http.StatusInternalServerError, err.Error())
+	}
 	return c.String(http.StatusOK, fmt.Sprintf("File created\nout: %s", out))
 }

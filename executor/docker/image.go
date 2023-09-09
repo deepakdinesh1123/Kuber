@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"os/exec"
 	"strings"
+	"sync"
+	"time"
 
 	"executor/db"
-
-	"github.com/rs/zerolog/log"
+	"executor/models"
 )
 
-func BuildImage(imageName, tag, dockerfile, userID string) (string, string, error) {
+func BuildImage(imageName, tag, dockerfile, userID string, ch chan models.Response, wg *sync.WaitGroup) {
 	if exists, _ := CheckImageExists(fmt.Sprintf("%s-%s:%s", imageName, userID, tag)); !exists {
 		imgNameWithId := fmt.Sprintf("%s-%s:%s", imageName, userID, tag)
 		dockerFile := bytes.NewBufferString(dockerfile)
@@ -20,19 +21,28 @@ func BuildImage(imageName, tag, dockerfile, userID string) (string, string, erro
 		cmd.Stdin = dockerFile
 		cmd.Stdout = nil
 
-		out, err := cmd.Output()
+		err := cmd.Start()
 		if err != nil {
-			return "", "", err
+			ch <- models.Response{Success: false, Message: err.Error()}
 		}
 
-		log.Debug().Str("Image", "ct")
+		for {
+			if exists, _ := CheckImageExists(imgNameWithId); exists {
+				_ = cmd.Wait()
+				break
+			} else {
+				ch <- models.Response{Message: "building"}
+				time.Sleep(3 * time.Second)
+			}
+		}
+
 		err = db.CreateNewImage(imgNameWithId, dockerfile, userID)
 		if err != nil {
-			return "", "", err
+			ch <- models.Response{Success: false, Message: err.Error()}
 		}
-		return string(out), imgNameWithId, nil
+		ch <- models.Response{Message: imgNameWithId, Success: true}
 	}
-	return "exists", imageName, nil
+	ch <- models.Response{Success: false, Message: "Already exists"}
 }
 
 func CheckImageExists(imageName string) (bool, error) {

@@ -1,72 +1,77 @@
 package handlers
 
 import (
+	"executor/db"
 	"executor/docker"
+	"executor/models"
 	"fmt"
 	"net/http"
+	"sync"
 
+	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog/log"
 )
 
-// @Summary Create an image
-// @Description Create a Docker image based on the provided parameters.
-// @Tags Images
-// @Accept json
-// @Produce json
-// @Param ImageName body string true "Name of the Docker image"
-// @Param Tag body string true "Tag for the Docker image"
-// @Param Dockerfile body string true "Content of the Dockerfile"
-// @Success 200 {object} map[string]interface{} "{success: true, message: "ImageName"}"
-// @Failure 500 {object} map[string]interface{} "{success: false, message: "Error"}"
-// @Router /images [post]
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
 func CreateImage(c echo.Context) error {
 
-	userID := c.Request().Context().Value("UserID").(string)
-
+	ws, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
+	if err != nil {
+		return err
+	}
+	defer ws.Close()
 	type RequestBody struct {
 		ImageName  string `json:"ImageName"`
 		Tag        string `json:"Tag"`
 		Dockerfile string `json:"Dockerfile"`
+		UserID     string `json:"user_id"` // This is just a temporary thing
 	}
+	var req RequestBody
+	ws.ReadJSON(&req)
+	var wg sync.WaitGroup
+	ch := make(chan models.Response)
 
-	requestBody := new(RequestBody)
-
-	if err := c.Bind(requestBody); err != nil {
-		return err
-	}
-
-	_, imgName, err := docker.BuildImage(requestBody.ImageName, requestBody.Tag, requestBody.Dockerfile, userID)
-	if err != nil {
-		log.Error().Str("Error", err.Error())
-		data := map[string]interface{}{
-			"success": false,
-			"error":   err.Error(),
+	go docker.BuildImage(req.ImageName, req.Tag, req.Dockerfile, req.UserID, ch, &wg)
+	for {
+		resp := <-ch
+		fmt.Println(resp)
+		if resp.Message == "building" {
+			data := map[string]interface{}{
+				"status": "building",
+			}
+			ws.WriteJSON(data)
+		} else {
+			if resp.Success {
+				data := map[string]interface{}{
+					"status":  "finished",
+					"imgName": resp.Message,
+				}
+				ws.WriteJSON(data)
+			} else {
+				data := map[string]interface{}{
+					"status":  "finished",
+					"imgName": resp.Message,
+				}
+				ws.WriteJSON(data)
+			}
+			break
 		}
-		return c.JSON(http.StatusInternalServerError, data)
+
 	}
-	data := map[string]interface{}{
-		"success": true,
-		"message": imgName,
-	}
-	return c.JSON(http.StatusOK, data)
+	return nil
 }
 
-// @Summary Delete an image
-// @Description Delete a Docker image by name and tag.
-// @Tags Images
-// @Accept json
-// @Produce json
-// @Param UserID header string true "User ID"
-// @Param ImageName body string true "Name of the Docker image"
-// @Param Tag body string true "Tag for the Docker image"
-// @Success 200 {object} map[string]interface{} "{success: true, message: "ImageName"}"
-// @Failure 500 {object} map[string]interface{} "{success: false, message: "Error"}"
-// @Router /images/delete [delete]
 func DeleteImage(c echo.Context) error {
 	userID := c.Request().Context().Value("UserID").(string)
 
 	type RequestBody struct {
+		ID        string `json:"ID"`
 		ImageName string `json:"ImageName"`
 		Tag       string `json:"Tag"`
 	}
@@ -77,7 +82,16 @@ func DeleteImage(c echo.Context) error {
 		return err
 	}
 	imageName := fmt.Sprintf("%s-%s:%s", requestBody.ImageName, userID, requestBody.Tag)
-	_, err := docker.DeleteImage(imageName)
+	err := db.DeleteImageByID(requestBody.ID)
+	if err != nil {
+		log.Error().Str("Error", err.Error())
+		data := map[string]interface{}{
+			"success": false,
+			"error":   err.Error(),
+		}
+		return c.JSON(http.StatusInternalServerError, data)
+	}
+	_, err = docker.DeleteImage(imageName)
 	if err != nil {
 		log.Error().Str("Error", err.Error())
 		data := map[string]interface{}{

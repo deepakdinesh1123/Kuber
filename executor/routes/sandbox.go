@@ -8,4 +8,5 @@ import (
 
 func RegisterSandboxRoutes(e *echo.Echo) {
 	e.POST("/sandbox", handlers.CreateSandbox)
+	e.DELETE("/sandbox/:id", handlers.DeleteSandbox)
 }

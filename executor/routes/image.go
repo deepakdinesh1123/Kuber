@@ -7,6 +7,6 @@ import (
 )
 
 func RegisterImageRoutes(e *echo.Echo) {
-	e.POST("/image/build", handlers.CreateImage)
+	e.GET("/image/build", handlers.CreateImage)
 	e.DELETE("/image", handlers.DeleteImage)
 }

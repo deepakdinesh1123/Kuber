@@ -17,7 +17,7 @@ type ContainerConfig struct {
 type Container struct {
 	ContainerName string
 	ImageName     string
-	ID            *string
+	ID            string
 	Config        *ContainerConfig
 }
 
@@ -39,7 +39,6 @@ func NewContainer(ContainerName, ImageName string, Config ContainerConfig) *Cont
 	return &Container{
 		ContainerName: ContainerName,
 		ImageName:     ImageName,
-		ID:            nil,
 		Config:        &Config,
 	}
 }
@@ -48,7 +47,6 @@ func ExistingContainer(ContainerName string) *Container {
 	return &Container{
 		ContainerName: ContainerName,
 		ImageName:     "",
-		ID:            nil,
 		Config:        nil,
 	}
 }
@@ -56,14 +54,34 @@ func ExistingContainer(ContainerName string) *Container {
 func (c *Container) CreateContainer() (string, error) {
 	log.Debug().Msg(c.ImageName)
 
-	cmd := exec.Command("docker", "run", fmt.Sprintf("--name=%s", c.ContainerName), "-d", "-t", c.ImageName)
-	cmd.Stdout = nil
-	cmd.Stderr = nil
-	if err := cmd.Run(); err != nil {
+	cmd := exec.Command("docker", "run", fmt.Sprintf("--name=%s", c.ContainerName), "-d", "-it", c.ImageName)
+	out, err := cmd.Output()
+	if err != nil {
 		fmt.Println("Error creating container:", err)
 		return "", err
 	}
+	c.ID = string(out)
 	return "Container created", nil
+}
+
+func (c *Container) StopContainer() error {
+	cmd := exec.Command("docker", "stop", c.ContainerName)
+	_, err := cmd.Output()
+	if err != nil {
+		fmt.Println("stop:", err.Error())
+		return err
+	}
+	return nil
+}
+
+func (c *Container) DeleteContainer() error {
+	cmd := exec.Command("docker", "rm", c.ContainerName)
+	_, err := cmd.Output()
+	if err != nil {
+		fmt.Println("Delete:", err.Error())
+		return err
+	}
+	return nil
 }
 
 func (c *Container) IsContainerRunning() models.Response {

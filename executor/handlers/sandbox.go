@@ -3,19 +3,12 @@ package handlers
 import (
 	"executor/db"
 	"executor/docker"
-	"fmt"
+	"executor/models"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 )
 
-// @Summary Create sandbox
-// @Description Creates a sandbox using the specified environment
-// @ID get-item-list
-// @Accept  json
-// @Produce  json
-// @Success 200
-// @Router /items [get]
 func CreateSandbox(c echo.Context) error {
 
 	userID := c.Request().Context().Value("UserID").(string)
@@ -43,11 +36,43 @@ func CreateSandbox(c echo.Context) error {
 	container, err := sandbox.CreateSandbox()
 
 	if err != nil {
-		return c.String(http.StatusInternalServerError, "Could not create sandbx")
+		data := map[string]interface{}{
+			"success": false,
+			"message": "could not create sandbox",
+		}
+		return c.JSON(http.StatusInternalServerError, data)
 	}
+	containers := models.JSONB{"containers": []string{container.ContainerName}}
+	err = db.CreateNewSandbox(requestBody.Private, requestBody.EnvironmentID, userID, requestBody.SandboxName, containers)
+	if err != nil {
+		data := map[string]interface{}{
+			"success": false,
+			"message": err.Error(),
+		}
+		return c.JSON(http.StatusInternalServerError, data)
+	}
+	data := map[string]interface{}{
+		"success":     true,
+		"container":   container.ContainerName,
+		"containerID": container.ID,
+	}
+	return c.JSON(http.StatusOK, data)
 
-	err = db.CreateNewSandbox(requestBody.Private, requestBody.EnvironmentID, userID, requestBody.SandboxName, "{}")
+}
 
-	return c.String(http.StatusOK, fmt.Sprintf("container: %s", container.ContainerName))
-
+func DeleteSandbox(c echo.Context) error {
+	sandboxID := c.Param("id")
+	sandbox := docker.ExistingSandbox(sandboxID)
+	err := sandbox.Delete()
+	if err != nil {
+		data := map[string]interface{}{
+			"success": false,
+			"message": err.Error(),
+		}
+		return c.JSON(http.StatusInternalServerError, data)
+	}
+	data := map[string]interface{}{
+		"success": true,
+	}
+	return c.JSON(http.StatusOK, data)
 }

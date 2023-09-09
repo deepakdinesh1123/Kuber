@@ -1,8 +1,8 @@
 package middlewares
 
 import (
+	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
@@ -13,12 +13,9 @@ import (
 func TokenMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			if strings.Contains(c.Request().URL.Path, "swagger") {
-				return next(c)
-			}
+
 			// Get the token from the request headers
 			auth_token := c.Request().Header.Get("Authorization")
-
 			if auth_token == "" {
 				return echo.NewHTTPError(http.StatusUnauthorized, "Missing token")
 			}
@@ -32,6 +29,9 @@ func TokenMiddleware() echo.MiddlewareFunc {
 			jwt_token := auth_token[len(bearerPrefix):]
 			claims := jwt.MapClaims{}
 			token, err := jwt.ParseWithClaims(jwt_token, claims, func(t *jwt.Token) (interface{}, error) {
+				if t.Method.Alg() != jwt.SigningMethodHS256.Alg() {
+					return nil, fmt.Errorf("Unexpected signing method: %v", t.Header["alg"])
+				}
 				return []byte(viper.Get("JWT_SECRET_KEY").(string)), nil
 			})
 
@@ -46,7 +46,7 @@ func TokenMiddleware() echo.MiddlewareFunc {
 					UserID = val.(string)
 				}
 			}
-
+			fmt.Println(UserID)
 			ctx := context.WithValue(c.Request().Context(), "UserID", UserID)
 			c.SetRequest(c.Request().WithContext(ctx))
 

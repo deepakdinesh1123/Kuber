@@ -1,9 +1,11 @@
 package db
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Image struct {
@@ -21,6 +23,7 @@ func (Image) TableName() string {
 }
 
 func CreateNewImage(imageName, dockerfile, userID string) error {
+	fmt.Println("db", userID)
 	userUUID, err := uuid.Parse(userID)
 	if err != nil {
 		return err
@@ -33,5 +36,24 @@ func CreateNewImage(imageName, dockerfile, userID string) error {
 	if res.Error != nil {
 		return res.Error
 	}
+	return nil
+}
+
+func DeleteImageByID(imageID string) error {
+	imageUUID, err := uuid.Parse(imageID)
+	if err != nil {
+		return err
+	}
+	image := Image{ID: imageUUID}
+	result := Postgres.DB.Delete(&image)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	// Check if any records were affected
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound // Image with the given ID not found
+	}
+
 	return nil
 }
