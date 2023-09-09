@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { Form } from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
 import { AxiosRequest, AxiosResponse } from "@/utils/service/api";
@@ -8,6 +9,7 @@ import {
 } from "@/utils/service/environment";
 
 export default function CreateEnvironment() {
+  const router = useRouter();
   const [schema, setSchema] = useState(null);
 
   useEffect(() => {
@@ -48,6 +50,7 @@ export default function CreateEnvironment() {
       if (response.success) {
         console.log("Data submitted successfully");
         window.alert("Environment created successfully");
+        router.push("/dashboard");
       } else {
         console.error("API request failed");
         window.alert("Environment creation failed");

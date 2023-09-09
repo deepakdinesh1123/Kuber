@@ -1,13 +1,33 @@
 import React from "react";
-import styles from "@/styles/Card.module.css";
+import styles from "../.././styles/Card.module.css";
 
-const Card = ({ title, handleClick, buttonText }) => {
+interface CardProps {
+  title: string;
+  id: string;
+  type: string;
+  onEditClick: () => void;
+  onDeleteClick: (id: string, type: string) => void;
+}
+
+const Card: React.FC<CardProps> = ({
+  title,
+  id,
+  type,
+  onEditClick,
+  onDeleteClick,
+}) => {
   return (
     <div className={styles.card}>
-      <div className={styles.card_content}>
-        <h2 className={styles.card_title}>{title}</h2>
-        <button className={styles.card_button} onClick={handleClick}>
-          {buttonText}
+      <h2 className={styles["card-title"]}>{title}</h2>
+      <div className={styles["card-buttons"]}>
+        <button className={styles["edit-button"]} onClick={onEditClick}>
+          Edit
+        </button>
+        <button
+          className={styles["delete-button"]}
+          onClick={() => onDeleteClick(id, type)}
+        >
+          Delete
         </button>
       </div>
     </div>

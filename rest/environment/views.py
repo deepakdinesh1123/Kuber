@@ -100,7 +100,7 @@ class EnvironmentView(APIView):
             try:
                 env = get_object_or_404(Environment, env_id=env_id)
                 env.delete()
-                return get_api_response("Environment deleted", status=204, success=True)
+                return get_api_response("Environment deleted", status=200, success=True)
             except Exception as e:
                 return get_api_response(str(e), status=500, success=False)
         else:

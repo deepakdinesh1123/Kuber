@@ -12,6 +12,12 @@ export async function handleGetInterview(
   return await handleApiRequest(request);
 }
 
+export async function handleDelInterview(
+  request: AxiosRequest,
+): Promise<AxiosResponse> {
+  return await handleApiRequest(request);
+}
+
 export async function handleGetForm(
   request: AxiosRequest,
 ): Promise<AxiosResponse> {

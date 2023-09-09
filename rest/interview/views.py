@@ -82,7 +82,7 @@ class InterviewView(APIView):
             try:
                 inter = get_object_or_404(Interview, interview_id=interview_id)
                 inter.delete()
-                return get_api_response("Interview deleted", status=204, success=True)
+                return get_api_response("Interview deleted", status=200, success=True)
             except Exception as e:
                 return get_api_response(str(e), status=500, success=False)
         else:

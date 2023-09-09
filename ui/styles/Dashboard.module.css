@@ -1,23 +1,50 @@
-/* MyComponent.module.css */
-
-.container {
-  background-color: rgba(0, 0, 0, 0.2); /* Light black background */
+/* Dashboard.module.css */
+.dashboard {
+  background-color: #f7f7f7;
   padding: 20px;
-  position: relative;
-  height: 100vh;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 20px;
+  overflow: hidden; /* Change to hidden to hide content that overflows */
 }
 
-.buttonsContainer {
-  position: absolute;
-  top: 10px;
-  right: 10px;
+.header {
+  position: sticky;
+  top: 0;
+  background-color: #fff; /* Change to your desired background color */
+  z-index: 1;
+  overflow-x: auto;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
 }
 
-.button {
-  background-color: white;
-  color: black;
-  border: none;
-  padding: 5px 10px;
-  margin-left: 10px;
-  cursor: pointer;
+.dashboardTitle {
+  font-size: 24px;
+  margin-bottom: 10px;
+  margin-right: auto;
+}
+
+.createButton {
+  margin-left: 20px;
+}
+
+.dashboardLine {
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.contentContainer {
+  overflow-x: auto;
+  white-space: nowrap;
+  display: flex;
+  gap: 20px;
+}
+
+.cardContainer {
+  display: flex;
+  flex-direction: row;
 }

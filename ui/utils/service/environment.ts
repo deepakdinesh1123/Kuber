@@ -29,3 +29,9 @@ export async function handleGetForm(
 ): Promise<AxiosResponse> {
   return await handleApiRequest(request);
 }
+
+export async function handleDelEnvironment(
+  request: AxiosRequest,
+): Promise<AxiosResponse> {
+  return await handleApiRequest(request);
+}

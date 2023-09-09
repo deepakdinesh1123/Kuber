@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { Form } from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
 import { AxiosRequest, AxiosResponse } from "@/utils/service/api";
@@ -33,6 +34,8 @@ export default function CreateInterview() {
     fetchData();
   }, []);
 
+  const router = useRouter();
+
   const onSubmit = async ({ formData }, e) => {
     try {
       const postRequest: AxiosRequest = {
@@ -46,6 +49,7 @@ export default function CreateInterview() {
       if (response.success) {
         console.log("Data submitted successfully");
         window.alert("Interview created successfully");
+        router.push("/dashboard");
       } else {
         console.error("API request failed");
         window.alert("Interview creation failed");
@@ -57,6 +61,9 @@ export default function CreateInterview() {
 
   const uiSchema = {
     config: {
+      "ui:widget": "textarea",
+    },
+    problem: {
       "ui:widget": "textarea",
     },
   };

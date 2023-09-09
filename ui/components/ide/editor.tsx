@@ -36,7 +36,7 @@ const CodeEditor = ({
       </div>
       <div>
         <Editor
-          height="70vh" // Adjust the height as needed
+          height="70vh"
           language={selectedLanguage}
           theme="vs-dark"
           value={editorContent}

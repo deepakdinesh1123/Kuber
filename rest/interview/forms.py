@@ -25,4 +25,10 @@ class InterForm(JsonSchemaForm):
 
     class Meta:
         model = Interview
-        fields = ["environment", "config", "time_limit"]
+        fields = [
+            "environment",
+            "name",
+            "problem",
+            "config",
+            "time_limit",
+        ]

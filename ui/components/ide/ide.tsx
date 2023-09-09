@@ -10,7 +10,6 @@ const languageOptions = [
   { label: "C", value: "c" },
   { label: "C++", value: "cpp" },
   { label: "HTML", value: "html" },
-  // Add more programming languages as needed
 ];
 
 function IDE() {
@@ -21,7 +20,6 @@ function IDE() {
     c: "",
     cpp: "",
     html: "",
-    // Add more language keys with empty strings for other languages
   });
 
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
@@ -46,7 +44,6 @@ function IDE() {
       c: ".c",
       cpp: ".cpp",
       html: ".html",
-      // Add more extensions for other languages as needed
     }[currentLanguage];
 
     if (filename && !filename.endsWith(ext)) {
@@ -64,7 +61,6 @@ function IDE() {
       editorContent: editorContent[selectedLanguage],
     };
 
-    // Convert the requestData object to a JSON string
     const requestBody = JSON.stringify(requestData);
     console.log(requestBody);
   };

@@ -18,13 +18,18 @@ def default_config():
 
 class Interview(TimeStampMixin):
     id = models.UUIDField(primary_key=True, default=uuid4, name="interview_id")
+    name = models.CharField(max_length=100, unique=True, default="Interview Object")
     environment = models.ForeignKey("environment.Environment", on_delete=models.CASCADE)
     creator = models.ForeignKey("accounts.User", on_delete=models.CASCADE)
     config = models.JSONField(default=default_config)
+    problem = models.TextField(blank=True, null=True)
     time_limit = models.TimeField(null=True)
 
     def get_interview_url(self):
         return self.int_id
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class InterviewTest(models.Model):

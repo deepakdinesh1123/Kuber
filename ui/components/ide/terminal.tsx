@@ -7,7 +7,6 @@ const XtermComponent = () => {
   const [allowInput, setAllowInput] = useState(true);
 
   useEffect(() => {
-    // Use dynamic imports to load Xterm.js packages
     import("xterm").then((xterm) => {
       import("xterm-addon-fit").then((fitAddon) => {
         const { Terminal } = xterm;

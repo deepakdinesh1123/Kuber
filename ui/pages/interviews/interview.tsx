@@ -5,19 +5,17 @@ import styles from "../../styles/Interview.module.css";
 function Interview() {
   const [showProblemStatement, setShowProblemStatement] = useState(false);
   const initialTimerValue = 10;
-  const [timer, setTimer] = useState(initialTimerValue); // Initial timer value in seconds
+  const [timer, setTimer] = useState(initialTimerValue);
 
   const toggleProblemStatement = () => {
     setShowProblemStatement(!showProblemStatement);
   };
 
   const handleSubmit = () => {
-    // Log the submit action
     console.log("Submit button clicked");
   };
 
   const handleTest = () => {
-    // Log the test action
     console.log("Test button clicked");
   };
 
@@ -29,7 +27,6 @@ function Interview() {
         setTimer((prevTimer) => {
           if (prevTimer <= 1) {
             clearInterval(timerInterval);
-            // Timer has reached 0, trigger submit
             handleSubmit();
             return 0;
           }
@@ -51,7 +48,7 @@ function Interview() {
     <div className={styles["interview-container"]}>
       <div className={styles["top-right"]}>
         <span className={styles["timer-display"]}>
-          Timer: {formatTime(timer)} {/* Display formatted time */}
+          Timer: {formatTime(timer)}
         </span>
         <button onClick={handleSubmit}>Submit</button>
         <button onClick={handleTest}>Test</button>

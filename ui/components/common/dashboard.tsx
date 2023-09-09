@@ -1,38 +1,49 @@
-import { handleGetUserImages } from "@/utils/service/image";
-import { getCookie } from "cookies-next";
-import { useEffect, useState } from "react";
+import React from "react";
 import Card from "./card";
-import { UUID } from "crypto";
+import styles from "../../styles/Dashboard.module.css";
 
 interface DashboardProps {
-  type: string;
+  title: string;
+  cardData: Array<{
+    id: string;
+    type: string;
+    title: string;
+  }>;
+  onCreateClick: () => void;
+  onDeleteClick: (id: string, type: string) => void;
 }
 
-export default function Dashboard({ type }: DashboardProps) {
-  const [data, setData] = useState<any[]>([]);
-  useEffect(() => {
-    const request = {
-      data: {},
-      type: "get",
-      url: `/${type}/`,
-    };
-    const response = handleGetUserImages(request).then((resp) => {
-      setData(resp.data);
-    });
-  }, [type]);
-
-  const handleClick = (id: number | UUID) => {};
-
+const Dashboard: React.FC<DashboardProps> = ({
+  title,
+  cardData,
+  onCreateClick,
+  onDeleteClick,
+}) => {
   return (
-    <>
-      {data.map((item, index) => {
-        <Card
-          key={item.id}
-          title={item.name}
-          handleClick={() => handleClick(item.id)}
-          buttonText={`Create ${type.slice(0, -1)}`}
-        />;
-      })}
-    </>
+    <div className={styles.dashboard}>
+      <div className={styles.header}>
+        <h1 className={styles.dashboardTitle}>{title}</h1>
+        <button className={styles.createButton} onClick={onCreateClick}>
+          Create
+        </button>
+      </div>
+      <hr className={styles.dashboardLine} />
+      <div className={styles.contentContainer}>
+        <div className={styles.cardContainer}>
+          {cardData.map((data, index) => (
+            <Card
+              key={index}
+              id={data.id}
+              type={data.type}
+              title={data.title}
+              onEditClick={() => {}}
+              onDeleteClick={onDeleteClick}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
   );
-}
+};
+
+export default Dashboard;
