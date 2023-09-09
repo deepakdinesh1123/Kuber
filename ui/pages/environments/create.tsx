@@ -11,13 +11,20 @@ import {
 export default function CreateEnvironment() {
   const router = useRouter();
   const [schema, setSchema] = useState(null);
+  const { formId } = router.query;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        let requestUrl = "/environments/forms";
+
+        if (formId) {
+          requestUrl = `/environments/form/${formId}`;
+        }
+
         const request: AxiosRequest = {
           type: "GET",
-          url: "/environments/forms",
+          url: requestUrl,
         };
 
         const response: AxiosResponse = await handleGetForm(request);
@@ -33,7 +40,7 @@ export default function CreateEnvironment() {
     };
 
     fetchData();
-  }, []);
+  }, [formId]);
 
   const onSubmit = async ({ formData }, e) => {
     try {

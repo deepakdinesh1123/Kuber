@@ -13,5 +13,8 @@ urlpatterns = [
         InterviewView.as_view(),
         name="post-interview-api",
     ),
-    re_path("forms", FormView.as_view(), name="forms-api"),
+    re_path(
+        r"forms/(?P<interview_id>[0-9A-Fa-f-]+)", FormView.as_view(), name="forms-api"
+    ),
+    re_path(r"forms", FormView.as_view(), name="forms-api"),
 ]

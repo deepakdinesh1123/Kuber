@@ -10,13 +10,21 @@ import {
 
 export default function CreateInterview() {
   const [schema, setSchema] = useState(null);
+  const router = useRouter();
+  const { formId } = router.query;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        let requestUrl = "/interviews/forms";
+
+        if (formId) {
+          requestUrl += `/${formId}`;
+        }
+
         const request: AxiosRequest = {
           type: "GET",
-          url: "/interviews/forms",
+          url: requestUrl,
         };
 
         const response: AxiosResponse = await handleGetForm(request);
@@ -32,9 +40,7 @@ export default function CreateInterview() {
     };
 
     fetchData();
-  }, []);
-
-  const router = useRouter();
+  }, [formId]); // Re-fetch data when formId changes
 
   const onSubmit = async ({ formData }, e) => {
     try {

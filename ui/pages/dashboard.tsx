@@ -35,6 +35,13 @@ const MainDashboard = () => {
     console.log("Create sandbox button clicked");
   };
 
+  const editCard = (id, type) => {
+    console.log(id, type);
+    const editUrl = `/${type}/create?formId=${id}`;
+    router.push(editUrl);
+    // router.push("/interviews/create")
+  };
+
   const deleteCard = async (id, type) => {
     try {
       const shouldDelete = window.confirm(
@@ -45,7 +52,7 @@ const MainDashboard = () => {
         console.log("Deletion canceled.");
         return;
       }
-      if (type === "environment") {
+      if (type === "environments") {
         const response = await delEnvironment(id);
         if (response.success) {
           console.log(`Deleted environment with ID ${id}`);
@@ -55,7 +62,7 @@ const MainDashboard = () => {
         } else {
           console.error("Error deleting environment:");
         }
-      } else if (type === "interview") {
+      } else if (type === "interviews") {
         const response = await delInterview(id);
         if (response.success) {
           console.log(`Deleted interview with ID ${id}`);
@@ -65,7 +72,7 @@ const MainDashboard = () => {
         } else {
           console.error("Error deleting Interview:");
         }
-      } else if (type === "sandbox") {
+      } else if (type === "sandboxs") {
         console.log("No method yet :)");
         // const response = await delInterview(id);
         // if (response.success) {
@@ -96,7 +103,7 @@ const MainDashboard = () => {
           environmentResponse.data.map((environment) => ({
             title: environment.env_name,
             id: environment.env_id,
-            type: "environment",
+            type: "environments",
           })),
         );
       } else {
@@ -108,7 +115,7 @@ const MainDashboard = () => {
           interviewResponse.data.map((interview) => ({
             title: interview.name,
             id: interview.interview_id,
-            type: "interview",
+            type: "interviews",
           })),
         );
       } else {
@@ -120,7 +127,7 @@ const MainDashboard = () => {
           sandboxResponse.data.map((sandbox) => ({
             title: sandbox.name,
             id: sandbox.id,
-            type: "sandbox",
+            type: "sandboxs",
           })),
         );
       } else {
@@ -153,6 +160,7 @@ const MainDashboard = () => {
           cardData={environmentData}
           onCreateClick={createEnv}
           onDeleteClick={deleteCard}
+          onEditClick={editCard}
         />
       </div>
       <div className="App">
@@ -169,6 +177,7 @@ const MainDashboard = () => {
           cardData={interviewData}
           onCreateClick={createInterview}
           onDeleteClick={deleteCard}
+          onEditClick={editCard}
         />
       </div>
     </div>

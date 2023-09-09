@@ -95,13 +95,39 @@ class FormView(APIView):
     # serializer_class = InterviewSerializer
     authentication_classes = [JWTAuthentication]
 
-    def get(self, request: Request, *args, **kwargs) -> Response:
+    def get(self, request: Request, interview_id=None, *args, **kwargs) -> Response:
         user = request.user
         user_envs = Environment.objects.filter(creator=user)
         args_list = {
             "environment": {str(env.env_id): env.env_name for env in user_envs}
         }
-        print(args_list)
         form = InterForm()
         json_schema = form.generate_json_schema(args_list=args_list)
+        if interview_id:
+            try:
+                interview = Interview.objects.get(
+                    interview_id=interview_id, creator=user
+                )
+                properties_to_add_default = [
+                    "environment",
+                    "name",
+                    "problem",
+                    "config",
+                    "time_limit",
+                ]
+                log_debug(interview.config)
+                for prop in properties_to_add_default:
+                    if (
+                        prop == "environment"
+                    ):  # getattr cant do interview.environment.env_name so separate
+                        json_schema["properties"]["environment"][
+                            "default"
+                        ] = interview.environment.env_name
+                        # cant find a better way :)
+                    else:
+                        json_schema["properties"][prop]["default"] = str(
+                            getattr(interview, prop)
+                        )
+            except Exception as e:
+                return get_api_response(str(e), status=500, success=False)
         return get_api_response(json_schema, status=200, success=True)

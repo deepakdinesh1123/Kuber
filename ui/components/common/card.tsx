@@ -5,7 +5,7 @@ interface CardProps {
   title: string;
   id: string;
   type: string;
-  onEditClick: () => void;
+  onEditClick: (id: string, type: string) => void;
   onDeleteClick: (id: string, type: string) => void;
 }
 
@@ -20,7 +20,10 @@ const Card: React.FC<CardProps> = ({
     <div className={styles.card}>
       <h2 className={styles["card-title"]}>{title}</h2>
       <div className={styles["card-buttons"]}>
-        <button className={styles["edit-button"]} onClick={onEditClick}>
+        <button
+          className={styles["edit-button"]}
+          onClick={() => onEditClick(id, type)}
+        >
           Edit
         </button>
         <button

@@ -11,6 +11,7 @@ interface DashboardProps {
   }>;
   onCreateClick: () => void;
   onDeleteClick: (id: string, type: string) => void;
+  onEditClick: (id: string, type: string) => void;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
@@ -18,6 +19,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   cardData,
   onCreateClick,
   onDeleteClick,
+  onEditClick,
 }) => {
   return (
     <div className={styles.dashboard}>
@@ -36,7 +38,7 @@ const Dashboard: React.FC<DashboardProps> = ({
               id={data.id}
               type={data.type}
               title={data.title}
-              onEditClick={() => {}}
+              onEditClick={onEditClick}
               onDeleteClick={onDeleteClick}
             />
           ))}
