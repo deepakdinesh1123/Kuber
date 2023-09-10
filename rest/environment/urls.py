@@ -21,7 +21,7 @@ urlpatterns = [
         name="getEnvironment",
     ),
     re_path(
-        r"environment/",
+        r"environment",
         EnvironmentView.as_view(),
         name="environment-api",
     ),
@@ -31,7 +31,12 @@ urlpatterns = [
         name="getSandbox",
     ),
     re_path(
-        "forms/",
+        r"forms",
+        FormView.as_view(),
+        name="forms-api",
+    ),
+    re_path(
+        r"form/(?P<env_id>[0-9A-Fa-f-]+)",
         FormView.as_view(),
         name="form-api",
     ),

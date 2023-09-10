@@ -56,3 +56,6 @@ class Sandbox(models.Model):
         default=dict, blank=True, null=True
     )  # names of the containers are filled by kuber
     running = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return self.name

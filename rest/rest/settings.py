@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "language_support",
     "interview",
     "drf_spectacular",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -147,7 +148,7 @@ AUTH_USER_MODEL = "accounts.User"
 CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]
 
 REST_FRAMEWORK = {
-    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
+    # "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
@@ -158,5 +159,6 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "REST API for Quber",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
     # OTHER SETTINGS
 }

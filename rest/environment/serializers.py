@@ -36,4 +36,4 @@ class DockerFileSerializer(serializers.ModelSerializer):
 class SandboxSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sandbox
-        fields = ["name", "sandbox_creator", "user", "containers", "env"]
+        fields = "__all__"

@@ -1,36 +1,24 @@
 import { AxiosRequest, AxiosResponse, handleApiRequest } from "./api";
 
-export async function handleCreateEnvironment(
+export async function handleCreateInterview(
   request: AxiosRequest,
 ): Promise<AxiosResponse> {
   return await handleApiRequest(request);
 }
 
-export async function getMachine(
+export async function handleGetInterview(
   request: AxiosRequest,
 ): Promise<AxiosResponse> {
   return await handleApiRequest(request);
 }
 
-export async function handleGetEnvironment(
-  request: AxiosRequest,
-): Promise<AxiosResponse> {
-  return await handleApiRequest(request);
-}
-
-export async function handleCreateSandbox(
+export async function handleDelInterview(
   request: AxiosRequest,
 ): Promise<AxiosResponse> {
   return await handleApiRequest(request);
 }
 
 export async function handleGetForm(
-  request: AxiosRequest,
-): Promise<AxiosResponse> {
-  return await handleApiRequest(request);
-}
-
-export async function handleDelEnvironment(
   request: AxiosRequest,
 ): Promise<AxiosResponse> {
   return await handleApiRequest(request);

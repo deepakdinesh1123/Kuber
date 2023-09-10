@@ -9,6 +9,7 @@ from accounts.authentication import (
 )
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render
+from drf_yasg import openapi
 from environment.models import Environment
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
@@ -27,6 +28,7 @@ from .serializers import InterviewSerializer
 
 
 class InterviewView(APIView):
+    serializer_class = InterviewSerializer
     authentication_classes = [JWTAuthentication]
 
     def post(self, request: Request, *args, **kwargs) -> Response:
@@ -45,7 +47,8 @@ class InterviewView(APIView):
 
             if config_data:
                 request.data["config"] = config_dict
-            request.data["config"] = default_config()
+            else:
+                request.data["config"] = default_config()
             request.data["creator"] = request.user.id
 
             serializer = InterviewSerializer(data=request.data)
@@ -79,7 +82,7 @@ class InterviewView(APIView):
             try:
                 inter = get_object_or_404(Interview, interview_id=interview_id)
                 inter.delete()
-                return get_api_response("Interview deleted", status=204, success=True)
+                return get_api_response("Interview deleted", status=200, success=True)
             except Exception as e:
                 return get_api_response(str(e), status=500, success=False)
         else:
@@ -89,15 +92,42 @@ class InterviewView(APIView):
 
 
 class FormView(APIView):
+    # serializer_class = InterviewSerializer
     authentication_classes = [JWTAuthentication]
 
-    def get(self, request: Request, *args, **kwargs) -> Response:
+    def get(self, request: Request, interview_id=None, *args, **kwargs) -> Response:
         user = request.user
         user_envs = Environment.objects.filter(creator=user)
         args_list = {
             "environment": {str(env.env_id): env.env_name for env in user_envs}
         }
-        print(args_list)
         form = InterForm()
         json_schema = form.generate_json_schema(args_list=args_list)
+        if interview_id:
+            try:
+                interview = Interview.objects.get(
+                    interview_id=interview_id, creator=user
+                )
+                properties_to_add_default = [
+                    "environment",
+                    "name",
+                    "problem",
+                    "config",
+                    "time_limit",
+                ]
+                log_debug(interview.config)
+                for prop in properties_to_add_default:
+                    if (
+                        prop == "environment"
+                    ):  # getattr cant do interview.environment.env_name so separate
+                        json_schema["properties"]["environment"][
+                            "default"
+                        ] = interview.environment.env_name
+                        # cant find a better way :)
+                    else:
+                        json_schema["properties"][prop]["default"] = str(
+                            getattr(interview, prop)
+                        )
+            except Exception as e:
+                return get_api_response(str(e), status=500, success=False)
         return get_api_response(json_schema, status=200, success=True)

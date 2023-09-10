@@ -51,6 +51,8 @@ class DockerRegistry(APIView):
 
 
 class EnvironmentView(APIView):
+    serializer_class = EnvironmentSerializer
+
     def get(self, request: Request, env_id=None, *args, **kwargs) -> Response:
         if env_id:
             try:
@@ -98,7 +100,7 @@ class EnvironmentView(APIView):
             try:
                 env = get_object_or_404(Environment, env_id=env_id)
                 env.delete()
-                return get_api_response("Environment deleted", status=204, success=True)
+                return get_api_response("Environment deleted", status=200, success=True)
             except Exception as e:
                 return get_api_response(str(e), status=500, success=False)
         else:
@@ -143,7 +145,7 @@ class SandboxView(APIView):
 class FormView(APIView):
     authentication_classes = [JWTAuthentication]
 
-    def get(self, request: Request, *args, **kwargs) -> Response:
+    def get(self, request: Request, env_id=None, *args, **kwargs) -> Response:
         user = request.user
         user_images = DockerImage.objects.filter(created_by=user)
         types = dict(ENVIRONMENT_CHOICES)
@@ -153,6 +155,33 @@ class FormView(APIView):
         }
         form = EnvForm()
         json_schema = form.generate_json_schema(args_list=args_list)
+        log_debug(json_schema)
+        log_debug(env_id)
+        if env_id:
+            try:
+                print("try")
+                environment = Environment.objects.get(env_id=env_id, creator=user)
+                properties_to_add_default = [
+                    "env_name",
+                    "image",
+                    "config",
+                    "type",
+                    "private",
+                ]
+                log_debug(properties_to_add_default)
+                for prop in properties_to_add_default:
+                    if prop == "image":
+                        json_schema["properties"]["image"][
+                            "default"
+                        ] = environment.image.name
+                        log_debug(prop)
+                    else:
+                        json_schema["properties"][prop]["default"] = str(
+                            getattr(environment, prop)
+                        )
+            except Exception as e:
+                return get_api_response(str(e), status=500, success=False)
+
         return get_api_response(json_schema, status=200, success=True)
 
 

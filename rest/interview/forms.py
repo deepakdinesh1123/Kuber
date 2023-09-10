@@ -19,11 +19,16 @@ class InterForm(JsonSchemaForm):
                         "enum": list(value.keys()),
                     }
 
-                # print(modification)
                 json_schema["properties"][key] = key_val
 
         return json_schema
 
     class Meta:
         model = Interview
-        fields = ["environment", "config", "time_limit"]
+        fields = [
+            "environment",
+            "name",
+            "problem",
+            "config",
+            "time_limit",
+        ]

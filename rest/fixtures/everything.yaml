@@ -1,0 +1,65 @@
+- model: accounts.user
+  pk: 1
+  fields:
+    username: user1
+    github_username: github_user1
+    github_repos: {}
+    email: user1@example.com
+    date_joined: "2023-09-09T00:00:00Z"
+    is_admin: false
+    is_active: true
+    is_staff: false
+    is_superuser: false
+
+- model: accounts.user
+  pk: 2
+  fields:
+    username: LordDaemon13
+    github_username: github_user2
+    github_repos: {}
+    email: user2@example.com
+    date_joined: "2023-09-10T00:00:00Z"
+    is_admin: true
+    is_active: true
+    is_staff: true
+    is_superuser: true
+
+- model: environment.dockerimage
+  pk: 1
+  fields:
+    name: Docker_Image_1
+    Dockerfile: Dockerfile content...
+    created_by: LordDaemon13
+    private: true
+
+- model: environment.environment
+  pk: 1
+  fields:
+    name: Environment_1
+    image: Docker_Image_1
+    creator: LordDaemon13
+    created_at: "2023-09-09T00:00:00Z"
+    config: {}
+    type: docker
+    private: true
+
+- model: environment.sandbox
+  pk: 1
+  fields:
+    creator: LordDaemon13
+    env: Environment_1
+    created_at: "2023-09-09T00:00:00Z"
+    name: Sandbox_1
+    private: true
+    containers: { "asdf": "dfassdf" }
+    running: false
+
+- model: interview.interview
+  pk: 1
+  fields:
+    name: Interview_1
+    environment: Environment_1
+    creator: LordDaemon13
+    config: { "asdfsad": "fdsadf" }
+    problem: Interview problem description...
+    time_limit: "00:30:00"
