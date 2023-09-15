@@ -103,7 +103,7 @@ func (c *Container) IsContainerRunning() models.Response {
 }
 
 func (c *Container) GetFile(FilePath string) (string, error) {
-	cmd := exec.Command("docker", "exec", "-i", "cat", FilePath)
+	cmd := exec.Command("docker", "exec", "-i", c.ContainerName, "cat", FilePath)
 	output, err := cmd.Output()
 	if err != nil {
 		return "", err
@@ -112,7 +112,7 @@ func (c *Container) GetFile(FilePath string) (string, error) {
 }
 
 func (c *Container) CreateFile(FilePath string) (string, error) {
-	cmd := exec.Command("docker", "exec", "-i", "touch", FilePath)
+	cmd := exec.Command("docker", "exec", "-i", c.ContainerName, "sh", "-c", fmt.Sprintf("touch %s", FilePath))
 	output, err := cmd.Output()
 	if err != nil {
 		return "", err
@@ -121,7 +121,7 @@ func (c *Container) CreateFile(FilePath string) (string, error) {
 }
 
 func (c *Container) UpdateFile(FilePath, FileContent string) (string, error) {
-	cmd := exec.Command("docker", "exec", "-i", "sh", "-c", fmt.Sprintf("echo %s >> %s", FileContent, FileContent))
+	cmd := exec.Command("docker", "exec", "-i", c.ContainerName, "sh", "-c", fmt.Sprintf("echo %s >> %s", FileContent, FilePath))
 	output, err := cmd.Output()
 	if err != nil {
 		return "", err
@@ -130,7 +130,7 @@ func (c *Container) UpdateFile(FilePath, FileContent string) (string, error) {
 }
 
 func (c *Container) DeleteFile(FilePath string) (string, error) {
-	cmd := exec.Command("docker", "exec", "-i", "rm", FilePath)
+	cmd := exec.Command("docker", "exec", "-i", c.ContainerName, "rm", FilePath)
 	output, err := cmd.Output()
 	if err != nil {
 		return "", err
@@ -139,7 +139,7 @@ func (c *Container) DeleteFile(FilePath string) (string, error) {
 }
 
 func (c *Container) GetFolderContents(FolderPath string) (string, error) {
-	cmd := exec.Command("docker", "exec", "-i", "rm", FolderPath)
+	cmd := exec.Command("docker", "exec", "-i", c.ContainerName, "rm", FolderPath)
 	output, err := cmd.Output()
 	if err != nil {
 		return "", err
@@ -148,7 +148,7 @@ func (c *Container) GetFolderContents(FolderPath string) (string, error) {
 }
 
 func (c *Container) CreateFolder(FolderPath string) (string, error) {
-	cmd := exec.Command("docker", "exec", "-i", "mkdir", FolderPath)
+	cmd := exec.Command("docker", "exec", "-i", c.ContainerName, "mkdir", FolderPath)
 	output, err := cmd.Output()
 	if err != nil {
 		return "", err
@@ -157,7 +157,7 @@ func (c *Container) CreateFolder(FolderPath string) (string, error) {
 }
 
 func (c *Container) DeleteFolder(FolderPath string) (string, error) {
-	cmd := exec.Command("docker", "exec", "-i", "rm", "-rf", FolderPath)
+	cmd := exec.Command("docker", "exec", "-i", c.ContainerName, "rm", "-rf", FolderPath)
 	output, err := cmd.Output()
 	if err != nil {
 		return "", err

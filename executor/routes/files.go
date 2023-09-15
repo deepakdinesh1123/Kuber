@@ -7,7 +7,7 @@ import (
 )
 
 func RegisterFileRoutes(e *echo.Echo) {
-	e.POST("/container/file/create", handlers.CreateFile)
 	e.POST("/container/file", handlers.UpdateFile)
+	e.POST("/container/file/create", handlers.CreateFile)
 	e.DELETE("/container/file", handlers.DeleteFile)
 }

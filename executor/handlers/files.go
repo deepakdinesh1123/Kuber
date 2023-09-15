@@ -132,7 +132,7 @@ func CreateFile(c echo.Context) error {
 	if err != nil {
 		c.String(http.StatusInternalServerError, err.Error())
 	}
-	return c.String(http.StatusOK, fmt.Sprintf("File Deleted\nout: %s", out))
+	return c.String(http.StatusOK, fmt.Sprintf("File Created\nout: %s", out))
 }
 
 func DeleteFile(c echo.Context) error {

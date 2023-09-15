@@ -29,5 +29,6 @@ func main() {
 	e.Use(middlewares.TokenMiddleware())
 	routes.RegisterImageRoutes(e)
 	routes.RegisterSandboxRoutes(e)
+	routes.RegisterFileRoutes(e)
 	e.Logger.Fatal(e.Start(":1323"))
 }
